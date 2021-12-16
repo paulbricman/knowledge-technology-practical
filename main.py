@@ -1,5 +1,11 @@
 import streamlit as st
+from components import *
 
-from components import hero_section
+
+st.set_page_config(
+        page_title='gymnastics expert system',
+        layout='wide'
+    )
 
 hero_section()
+choose_elements()

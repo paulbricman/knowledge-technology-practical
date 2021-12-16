@@ -1,0 +1,92 @@
+{
+    "beam": {
+        "squat on mount": {
+            "element_type": "mount",
+            "difficulty": "TA"
+        },
+        "middle split mount": {
+            "element_type": "mount",
+            "difficulty": "A"
+        },
+        "squat through the rear mount": {
+            "element_type": "mount",
+            "difficulty": "A"
+        },
+        "jump to forward roll mount": {
+            "element_type": "mount",
+            "difficulty": "B"
+        },
+        "split leap": {
+            "element_type": "jump",
+            "difficulty": "TA"
+        },
+        "split jump": {
+            "element_type": "jump",
+            "difficulty": "TA"
+        },
+        "straight jump": {
+            "element_type": "jump",
+            "difficulty": "TA"
+        },
+        "cat leap": {
+            "element_type": "jump",
+            "difficulty": "A"
+        },
+        "Fouetté half turn": {
+            "element_type": "dance",
+            "difficulty": "TA"
+        },
+        "1/1 turn pirouette": {
+            "element_type": "dance",
+            "difficulty": "A"
+        },
+        "1 ½ turn pirouette": {
+            "element_type": "dance",
+            "difficulty": "B"
+        },
+        "standing split": {
+            "element_type": "dance",
+            "difficulty": "TA"
+        },
+        "handstand (1 sec)": {
+            "element_type": "acro",
+            "difficulty": "TA"
+        },
+        "handstand (2 sec)": {
+            "element_type": "acro",
+            "difficulty": "A"
+        },
+        "handstand to forward roll": {
+            "element_type": "acro",
+            "difficulty": "B"
+        },
+        "forward roll": {
+            "element_type": "acro",
+            "difficulty": "TA"
+        },
+        "forward roll without hand support": {
+            "element_type": "acro",
+            "difficulty": "B"
+        },
+        "cartwheel": {
+            "element_type": "acro",
+            "difficulty": "A"
+        },
+        "roundoff": {
+            "element_type": "acro",
+            "difficulty": "B"
+        },
+        "front / back walkover": {
+            "element_type": "acro",
+            "difficulty": "A"
+        },
+        "front / back salto tucked dismount ": {
+            "element_type": "dismount",
+            "difficulty": "A"
+        },
+        "front walkover dismount": {
+            "element_type": "dismount",
+            "difficulty": "TA"
+        }
+    }
+}
