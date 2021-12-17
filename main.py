@@ -1,5 +1,6 @@
 import streamlit as st
 from components import *
+from util import *
 
 
 st.set_page_config(
@@ -7,5 +8,6 @@ st.set_page_config(
         layout='wide'
     )
 
+init_session_state()
 hero_section()
 choose_elements()

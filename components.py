@@ -12,6 +12,14 @@ def hero_section():
     st.markdown('---')
 
 
+def notes_section(parent):
+    parent.markdown('### notes')
+    st.session_state['small_mistakes'] = parent.number_input('small mistakes', step=1, value=st.session_state['small_mistakes'])
+    st.session_state['big_mistakes'] = parent.number_input('big_mistakes', step=1, value=st.session_state['big_mistakes'])
+    st.session_state['falls'] = parent.number_input('falls', step=1, value=st.session_state['falls'])
+    st.session_state['connections'] = parent.number_input('connections', step=1, value=st.session_state['connections'])
+    
+
 def choose_elements():
     elements = kb['beam']
     mounts = filter_dict(elements, lambda x: x[1]['element_type'] == 'mount')
@@ -42,14 +50,8 @@ def choose_elements():
             selected_acros += [acro]
 
     selected_dismount = col2.radio('What dismount is the gymnast performing?', dismounts)
-
     
-    
-    col3.markdown('### notes')
-    small_mistakes = col3.number_input('small mistakes', step=1)
-    big_mistakes = col3.number_input('big mistakes', step=1)
-    falls = col3.number_input('falls', step=1)
-    connections = col3.number_input('connections', step=1)
+    notes_section(col3)
 
     missed_elements = 6 - (2 + len(selected_jumps) + len(selected_dances) + len(selected_acros))
     
