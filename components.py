@@ -15,7 +15,7 @@ def hero_section():
 def notes_section(parent):
     parent.markdown('### notes')
     st.session_state['small_mistakes'] = parent.number_input('small mistakes', step=1, value=st.session_state['small_mistakes'])
-    st.session_state['big_mistakes'] = parent.number_input('big_mistakes', step=1, value=st.session_state['big_mistakes'])
+    st.session_state['big_mistakes'] = parent.number_input('big mistakes', step=1, value=st.session_state['big_mistakes'])
     st.session_state['falls'] = parent.number_input('falls', step=1, value=st.session_state['falls'])
     st.session_state['connections'] = parent.number_input('connections', step=1, value=st.session_state['connections'])
     
@@ -50,7 +50,10 @@ def choose_elements():
             selected_acros += [acro]
 
     selected_dismount = col2.radio('What dismount is the gymnast performing?', dismounts)
-    
+
+    st.session_state['selected_elements'] = [selected_mount] + selected_jumps + selected_dances + selected_acros + [selected_dismount]
+    st.session_state['selected_elements'] = [elements[e] for e in st.session_state['selected_elements']]
+
     notes_section(col3)
 
     missed_elements = 6 - (2 + len(selected_jumps) + len(selected_dances) + len(selected_acros))

@@ -1,92 +1,350 @@
 {
-    "beam": {
-        "squat on mount": {
-            "element_type": "mount",
-            "difficulty": "TA"
-        },
-        "middle split mount": {
-            "element_type": "mount",
-            "difficulty": "A"
-        },
-        "squat through the rear mount": {
-            "element_type": "mount",
-            "difficulty": "A"
-        },
-        "jump to forward roll mount": {
-            "element_type": "mount",
-            "difficulty": "B"
-        },
-        "split leap": {
-            "element_type": "jump",
-            "difficulty": "TA"
-        },
-        "split jump": {
-            "element_type": "jump",
-            "difficulty": "TA"
-        },
-        "straight jump": {
-            "element_type": "jump",
-            "difficulty": "TA"
-        },
-        "cat leap": {
-            "element_type": "jump",
-            "difficulty": "A"
-        },
-        "Fouetté half turn": {
-            "element_type": "dance",
-            "difficulty": "TA"
-        },
-        "1/1 turn pirouette": {
-            "element_type": "dance",
-            "difficulty": "A"
-        },
-        "1 ½ turn pirouette": {
-            "element_type": "dance",
-            "difficulty": "B"
-        },
-        "standing split": {
-            "element_type": "dance",
-            "difficulty": "TA"
-        },
-        "handstand (1 sec)": {
-            "element_type": "acro",
-            "difficulty": "TA"
-        },
-        "handstand (2 sec)": {
-            "element_type": "acro",
-            "difficulty": "A"
-        },
-        "handstand to forward roll": {
-            "element_type": "acro",
-            "difficulty": "B"
-        },
-        "forward roll": {
-            "element_type": "acro",
-            "difficulty": "TA"
-        },
-        "forward roll without hand support": {
-            "element_type": "acro",
-            "difficulty": "B"
-        },
-        "cartwheel": {
-            "element_type": "acro",
-            "difficulty": "A"
-        },
-        "roundoff": {
-            "element_type": "acro",
-            "difficulty": "B"
-        },
-        "front / back walkover": {
-            "element_type": "acro",
-            "difficulty": "A"
-        },
-        "front / back salto tucked dismount ": {
-            "element_type": "dismount",
-            "difficulty": "A"
-        },
-        "front walkover dismount": {
-            "element_type": "dismount",
-            "difficulty": "TA"
+    "apparatuses": {
+        "beam": {
+            "elements" : {
+                "squat on mount": {
+                    "element_type": "mount",
+                    "difficulty": "TA"
+                },
+                "middle split mount": {
+                    "element_type": "mount",
+                    "difficulty": "A"
+                },
+                "squat through the rear mount": {
+                    "element_type": "mount",
+                    "difficulty": "A"
+                },
+                "jump to forward roll mount": {
+                    "element_type": "mount",
+                    "difficulty": "B"
+                },
+                "split leap": {
+                    "element_type": "jump",
+                    "element_questions": [
+                        {
+                            "question": "What was the deviation from 180º?",
+                            "options": {
+                                "0°": {
+                                    "difficulty": "A"
+                                },
+                                "<20°": {
+                                    "execution": -0.1,
+                                    "difficulty": "A"
+                                },
+                                "20º - 45º": {
+                                    "execution": -0.3,
+                                    "difficulty": "A"
+                                },
+                                ">45º": {
+                                    "difficulty": "TA"
+                                }
+                            }
+                        }
+                    ]
+                },
+                "split jump": {
+                    "element_type": "jump",
+                    "element_questions": [
+                        {
+                            "question": "What was the deviation from 180º?",
+                            "options": {
+                                "0°": {
+                                    "difficulty": "B"
+                                },
+                                "<20°": {
+                                    "execution": -0.1,
+                                    "difficulty": "B"
+                                },
+                                "20º - 45º": {
+                                    "execution": -0.3,
+                                    "difficulty": "B"
+                                },
+                                ">45º": {
+                                    "difficulty": "TA"
+                                }
+                            }
+                        }
+                    ]
+                },
+                "straight jump": {
+                    "element_type": "jump",
+                    "difficulty": "TA"
+                },
+                "cat leap": {
+                    "element_type": "jump",
+                    "difficulty": "A",
+                    "element_questions": [
+                        {
+                            "question": "Was the leg exchange clear?",
+                            "options": {
+                                "Yes": {
+                                    "difficulty": "A"
+                                },
+                                "No": {
+                                    "difficulty": "TA"
+                                }
+                            }
+                        },
+                        {
+                            "question": "Were both legs above horizontal?",
+                            "options": {
+                                "Yes": {},
+                                "No, one/both legs were under horizontal": {
+                                    "execution": -0.3
+                                },
+                                "No, one/both legs were on horizontal": {
+                                    "execution": -0.1
+                                }
+                            }
+                        }
+                    ]
+                },
+                "Fouetté half turn": {
+                    "element_type": "dance",
+                    "difficulty": "TA"
+                },
+                "1/1 turn pirouette": {
+                    "element_type": "dance",
+                    "difficulty": "A"
+                },
+                "1 ½ turn pirouette": {
+                    "element_type": "dance",
+                    "difficulty": "B"
+                },
+                "standing split": {
+                    "element_type": "dance",
+                    "element_questions": [
+                        {
+                            "question": "Was the leg position held more than 2 seconds?",
+                            "options": {
+                                "Yes": {
+                                    "difficulty": "A"
+                                },
+                                "No": {
+                                    "difficulty": "N/A"
+                                }
+                            }
+                        }
+                    ]
+                },
+                "handstand (1 sec)": {
+                    "element_type": "acro",
+                    "difficulty": "TA",
+                    "element_questions": [
+                        {
+                            "question": "How long did the handstand hold?",
+                            "options": {
+                                "1 second": {
+                                    "difficulty": "TA"
+                                },
+                                "2+ seconds": {
+                                    "difficulty": "A"
+                                }
+                            }
+                        },
+                        {
+                            "question": "Did the handstand reach vertical (90º)?",
+                            "options": {
+                                "Yes": {
+                                    "skill_requirement": "True"
+                                },
+                                "No": {
+                                    "skill_requirement": "False"
+                                }
+                            }
+                        }
+                    ]
+                },
+                "handstand (2 sec)": {
+                    "element_type": "acro",
+                    "difficulty": "A"
+                },
+                "handstand to forward roll": {
+                    "element_type": "acro",
+                    "difficulty": "B"
+                },
+                "forward roll": {
+                    "element_type": "acro",
+                    "difficulty": "TA"
+                },
+                "forward roll without hand support": {
+                    "element_type": "acro",
+                    "element_questions": [
+                        {
+                            "question": "Did hands touch beam?",
+                            "options": {
+                                "Yes": {
+                                    "difficulty": "TA"
+                                },
+                                "No": {
+                                    "difficulty": "B"
+                                }
+                            }
+                        }
+                    ]
+                },
+                "cartwheel": {
+                    "element_type": "acro",
+                    "difficulty": "A"
+                },
+                "roundoff": {
+                    "element_type": "acro",
+                    "element_questions": [
+                        {
+                            "question": "Did the feet land at different timings or the beam did not vibrate?",
+                            "options": {
+                                "Yes": {
+                                    "difficulty": "A"
+                                },
+                                "No": {
+                                    "difficulty": "B"
+                                }
+                            }
+                        }
+                    ]
+                },
+                "front / back walkover": {
+                    "element_type": "acro",
+                    "difficulty": "A"
+                },
+                "front / back salto tucked dismount ": {
+                    "element_type": "dismount",
+                    "difficulty": "A"
+                },
+                "front walkover dismount": {
+                    "element_type": "dismount",
+                    "difficulty": "TA"
+                }
+            },
+            "mistakes": {
+                "question": "Was the duration of the routine longer than 1:20 min?",
+                    "options": {
+                        "Yes": {
+                            "execution": -0.1
+                        },
+                        "No": {}
+                    }
+            }
         }
+    },
+    "artisanry": [
+        "Lack of confidence",
+        "Lack of personal style",
+        "Lack of variation in rhythm and speed of movements (movements  = choreo/non-elements)",
+        "Routine presented as isolated elements (no flow)",
+        "Not enough use of the entire beam length",
+        "No sidewards choreography (needs to have at least 3 sideway steps)",
+        "No choreography/elements close to the beam(upperbody, thigh, head)",
+        "Lack of complexity and creativity in movements of choreography",
+        ">1x ½ turn on 2 feet during the entire routine"
+    ],
+    "general_execution_mistakes": {
+        "Wobble": [
+            "small",
+            "middle",
+            "big"
+        ],
+        "Bent arms or knees": [
+            "small",
+            "middle",
+            "big"
+        ],
+        "Open knees or legs": [
+            "small",
+            "middle"
+        ],
+        "Clear doubts before element": [
+            "small"
+        ],
+        "Not enough straightening of body": [
+            "small",
+            "middle"
+        ],
+        "Failure to meet technical requirements of dance element": [
+            "small",
+            "middle",
+            "big"
+        ],
+        "Body lines": [
+            "small"
+        ],
+        "Flexed feet": [
+            "small"
+        ],
+        "Precision": [
+            "small"
+        ],
+        "Dismount too close to apparatus": [
+            "middle"
+        ]        
+    },
+    "general_landing_mistakes": {
+        "Separated legs (only applicable to dismount on beam) ": [
+            "small"
+        ],
+        "Extra swing of arms": [
+            "small"
+        ],
+        "Lack of balance": [
+            "small",
+            "middle"
+        ],
+        "Extra steps/small hop": [
+            "small"
+        ],
+        "Big step": [
+            "middle"
+        ],
+        "Bad body form": [
+            "small",
+            "middle"
+        ],
+        "Deep squat": [
+            "middle"
+        ],
+        "Support of 1 or 2 arms on mat": [
+            "very big"
+        ],
+        "Fall on mat with knees or hips": [
+            "very big"
+        ],
+        "Fall on or against apparatus": [
+            "very big"
+        ],
+        "Not land on feet first": [
+            "very big",
+            {
+                "difficulty": "N/A",
+                "combo": "N/A",
+                "skill_requirement": "False"
+            }
+        ]     
+    },
+    "general_mistakes": {
+        "Execute combination with fall": [
+            "very big",
+            {
+                "difficulty": "N/A",
+                "combo": "N/A",
+                "skill_requirement": "False"
+            }
+        ],
+        "No presentation to judge at start and/or end of routine": [
+            "middle"
+        ],
+        "Help from trainer": [
+            "very big",
+            {
+                "difficulty": "N/A",
+                "combo": "N/A",
+                "skill_requirement": "False"
+            }
+        ],
+        "Jewelry, visible underwear, not skin colored tape": [
+            "middle"
+        ],
+        "Begin routine before starting sign of jury": [
+            "very big"
+        ]
     }
 }
