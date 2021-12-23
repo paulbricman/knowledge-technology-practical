@@ -21,7 +21,7 @@ def notes_section(parent):
     
 
 def choose_elements():
-    elements = kb['beam']
+    elements = kb['apparatuses']['beam']['elements']
     mounts = filter_dict(elements, lambda x: x[1]['element_type'] == 'mount')
     jumps = filter_dict(elements, lambda x: x[1]['element_type'] == 'jump')
     dances = filter_dict(elements, lambda x: x[1]['element_type'] == 'dance')
@@ -52,7 +52,7 @@ def choose_elements():
     selected_dismount = col2.radio('What dismount is the gymnast performing?', dismounts)
 
     st.session_state['selected_elements'] = [selected_mount] + selected_jumps + selected_dances + selected_acros + [selected_dismount]
-    st.session_state['selected_elements'] = [elements[e] for e in st.session_state['selected_elements']]
+    st.session_state['selected_elements'] = [(e, elements[e]) for e in st.session_state['selected_elements']]
 
     notes_section(col3)
 
@@ -60,4 +60,79 @@ def choose_elements():
     
     st.markdown('---')
     if st.button('Next'):
-        st.balloons()
+        st.session_state['state'] = 'element_walkthrough'
+        st.experimental_rerun()
+
+
+def detail_element(element):
+    st.subheader(element[0])
+    for question in element[1]['element_questions']:
+        option = st.radio(question['question'], question['options'].keys())
+    if st.button('Next'):
+        st.session_state['current_element'] += 1
+        st.experimental_rerun()
+
+
+def apparatus_mistakes():
+    mistakes = kb['apparatuses']['beam']['mistakes']
+    st.subheader('apparatus mistakes')
+    for question in mistakes:
+        option = st.radio(question['question'], question['options'].keys())
+    if st.button('Next'):
+        st.session_state['state'] = 'general_execution_mistakes'
+        st.experimental_rerun()
+
+
+def general_execution_mistakes():
+    st.subheader('general execution mistakes')
+    mistakes = kb['general_execution_mistakes']
+    
+    for mistake in mistakes.items():
+        option = st.radio(mistake[0], ['none'] + mistake[1])
+        if option == 'small':
+            st.session_state['execution'] -= 0.1
+        elif option == 'medium':
+            st.session_state['execution'] -= 0.3
+        elif option == 'big':
+            st.session_state['execution'] -= 0.5
+
+    if st.button('Next'):
+        st.session_state['state'] = 'general_landing_mistakes'
+        st.experimental_rerun()
+
+
+def general_landing_mistakes():
+    st.subheader('general landing mistakes')
+    mistakes = kb['general_landing_mistakes']
+    
+    for mistake in mistakes.items():
+        option = st.radio(mistake[0], ['none'] + mistake[1])
+        if option == 'small':
+            st.session_state['execution'] -= 0.1
+        elif option == 'medium':
+            st.session_state['execution'] -= 0.3
+        elif option == 'big':
+            st.session_state['execution'] -= 0.5
+
+    if st.button('Next'):
+        st.session_state['state'] = 'general_mistakes'
+        st.experimental_rerun()
+
+
+def general_mistakes():
+    st.subheader('general mistakes')
+    mistakes = kb['general_mistakes']
+    
+    for mistake in mistakes.items():
+        option = st.radio(mistake[0], ['none'] + mistake[1])
+        if option == 'small':
+            st.session_state['execution'] -= 0.1
+        elif option == 'medium':
+            st.session_state['execution'] -= 0.3
+        elif option == 'big':
+            st.session_state['execution'] -= 0.5
+
+    if st.button('Next'):
+        st.session_state['state'] = 'general_mistakes'
+        st.experimental_rerun()
+

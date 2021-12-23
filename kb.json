@@ -216,15 +216,15 @@
                     "difficulty": "TA"
                 }
             },
-            "mistakes": {
+            "mistakes": [{
                 "question": "Was the duration of the routine longer than 1:20 min?",
-                    "options": {
-                        "Yes": {
-                            "execution": -0.1
-                        },
-                        "No": {}
-                    }
-            }
+                "options": {
+                    "Yes": {
+                        "execution": -0.1
+                    },
+                    "No": {}
+                }
+            }]
         }
     },
     "artisanry": [
@@ -312,33 +312,18 @@
             "very big"
         ],
         "Not land on feet first": [
-            "very big",
-            {
-                "difficulty": "N/A",
-                "combo": "N/A",
-                "skill_requirement": "False"
-            }
+            "very big"
         ]     
     },
     "general_mistakes": {
         "Execute combination with fall": [
-            "very big",
-            {
-                "difficulty": "N/A",
-                "combo": "N/A",
-                "skill_requirement": "False"
-            }
+            "very big"
         ],
         "No presentation to judge at start and/or end of routine": [
             "middle"
         ],
         "Help from trainer": [
-            "very big",
-            {
-                "difficulty": "N/A",
-                "combo": "N/A",
-                "skill_requirement": "False"
-            }
+            "very big"
         ],
         "Jewelry, visible underwear, not skin colored tape": [
             "middle"
