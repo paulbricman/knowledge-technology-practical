@@ -133,6 +133,19 @@ def general_mistakes():
             st.session_state['execution'] -= 0.5
 
     if st.button('Next'):
-        st.session_state['state'] = 'general_mistakes'
+        st.session_state['state'] = 'artistry'
         st.experimental_rerun()
 
+
+def artistry():
+    st.subheader('artistry')
+    mistakes = kb['artistry']
+    
+    for mistake in mistakes:
+        option = st.checkbox(mistake)
+        if option:
+            st.session_state['execution'] -= 0.1
+
+    if st.button('Next'):
+        st.session_state['state'] = 'artistry'
+        st.experimental_rerun()

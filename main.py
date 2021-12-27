@@ -22,7 +22,7 @@ else:
             st.session_state['current_element'] += 1
             st.experimental_rerun()
     else:
-        if st.session_state['state'] not in ['general_execution_mistakes', 'general_landing_mistakes', 'general_mistakes']:
+        if st.session_state['state'] not in ['general_execution_mistakes', 'general_landing_mistakes', 'general_mistakes', 'artistry']:
             apparatus_mistakes()
         elif st.session_state['state'] == 'general_execution_mistakes':
             general_execution_mistakes()
@@ -30,3 +30,6 @@ else:
             general_landing_mistakes()
         elif st.session_state['state'] == 'general_mistakes':
             general_mistakes()
+        elif st.session_state['state'] == 'artistry':
+            artistry()
+        
