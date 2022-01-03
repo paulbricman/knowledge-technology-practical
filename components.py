@@ -147,5 +147,17 @@ def artistry():
             st.session_state['execution'] -= 0.1
 
     if st.button('Next'):
-        st.session_state['state'] = 'artistry'
+        st.session_state['state'] = 'combos'
+        st.experimental_rerun()
+
+
+def combos():
+    st.subheader('element combinations')
+    elems = st.session_state['selected_elements']
+    
+    for elem_idx in range(len(elems) - 1):
+        st.radio(elems[elem_idx][0] + ' + ' + elems[elem_idx + 1][0] + '?', ['no', 'yes'])
+
+    if st.button('Next'):
+        st.session_state['state'] = 'combos'
         st.experimental_rerun()
