@@ -22,7 +22,7 @@ else:
             st.session_state['current_element'] += 1
             st.experimental_rerun()
     else:
-        if st.session_state['state'] not in ['general_execution_mistakes', 'general_landing_mistakes', 'general_mistakes', 'artistry', 'combos']:
+        if st.session_state['state'] not in ['general_execution_mistakes', 'general_landing_mistakes', 'general_mistakes', 'artistry', 'combos', 'results']:
             apparatus_mistakes()
         elif st.session_state['state'] == 'general_execution_mistakes':
             general_execution_mistakes()
@@ -34,4 +34,6 @@ else:
             artistry()
         elif st.session_state['state'] == 'combos':
             combos()
+        elif st.session_state['state'] == 'results':
+            results()
         

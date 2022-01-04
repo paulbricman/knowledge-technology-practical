@@ -1,6 +1,7 @@
 import streamlit as st
 import json
 from util import *
+import pandas as pd
 
 
 kb = json.load(open('kb.json', 'r'))
@@ -159,5 +160,21 @@ def combos():
         st.radio(elems[elem_idx][0] + ' + ' + elems[elem_idx + 1][0] + '?', ['no', 'yes'])
 
     if st.button('Next'):
-        st.session_state['state'] = 'combos'
+        st.session_state['state'] = 'results'
         st.experimental_rerun()
+
+
+def results():
+    st.subheader('results')
+
+    results = pd.DataFrame([
+        ['difficulty score (DS)', 2],
+        ['combo bonus (CB)', 2],
+        ['skill requirements (SR)', 2],
+        ['execution', 2],
+        ['artistry', 2],
+        ['D-score', 2],
+        ['E-score', 2],
+    ], columns=['rubric', 'score'])
+
+    st.dataframe(results)
