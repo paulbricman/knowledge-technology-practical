@@ -66,19 +66,45 @@ def choose_elements():
 
 
 def detail_element(element):
+    if 'difficulty' not in st.session_state.keys():
+        st.session_state['difficulty'] = 0
+
     st.subheader(element[0])
+    difficulty = element[1].get('difficulty', None)
+    if difficulty is not None:
+        if difficulty in ['TA', 'A']:
+            st.session_state['difficulty'] += 0.1
+        elif difficulty == 'B':
+            st.session_state['difficulty'] += 0.2
+
     for question in element[1]['element_questions']:
         option = st.radio(question['question'], question['options'].keys())
+        difficulty = question['options'][option].get('difficulty', None)
+        if difficulty is not None:
+            if difficulty in ['TA', 'A']:
+                st.session_state['difficulty'] += 0.1
+            elif difficulty == 'B':
+                st.session_state['difficulty'] += 0.2
+
     if st.button('Next'):
         st.session_state['current_element'] += 1
         st.experimental_rerun()
 
 
 def apparatus_mistakes():
+    if 'execution' not in st.session_state.keys():
+        st.session_state['execution'] = 0
+        
     mistakes = kb['apparatuses']['beam']['mistakes']
     st.subheader('apparatus mistakes')
     for question in mistakes:
         option = st.radio(question['question'], question['options'].keys())
+        if option == 'small':
+            st.session_state['execution'] -= 0.1
+        elif option == 'medium':
+            st.session_state['execution'] -= 0.3
+        elif option == 'big':
+            st.session_state['execution'] -= 0.5
     if st.button('Next'):
         st.session_state['state'] = 'general_execution_mistakes'
         st.experimental_rerun()
@@ -139,13 +165,16 @@ def general_mistakes():
 
 
 def artistry():
+    if 'artistry' not in st.session_state.keys():
+        st.session_state['artistry'] = 0
+
     st.subheader('artistry')
     mistakes = kb['artistry']
     
     for mistake in mistakes:
         option = st.checkbox(mistake)
         if option:
-            st.session_state['execution'] -= 0.1
+            st.session_state['artistry'] -= 0.1
 
     if st.button('Next'):
         st.session_state['state'] = 'combos'
@@ -168,11 +197,11 @@ def results():
     st.subheader('results')
 
     results = pd.DataFrame([
-        ['difficulty score (DS)', 2],
+        ['difficulty score (DS)', st.session_state['difficulty']],
         ['combo bonus (CB)', 2],
         ['skill requirements (SR)', 2],
-        ['execution', 2],
-        ['artistry', 2],
+        ['execution', st.session_state['execution']],
+        ['artistry', st.session_state['artistry']],
         ['D-score', 2],
         ['E-score', 2],
     ], columns=['rubric', 'score'])
