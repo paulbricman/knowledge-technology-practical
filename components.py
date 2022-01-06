@@ -182,11 +182,17 @@ def artistry():
 
 
 def combos():
-    st.subheader('element combinations')
+    if 'combo' not in st.session_state.keys():
+        st.session_state['combo'] = 0
+
     elems = st.session_state['selected_elements']
+    st.subheader('element combinations')
     
     for elem_idx in range(len(elems) - 1):
-        st.radio(elems[elem_idx][0] + ' + ' + elems[elem_idx + 1][0] + '?', ['no', 'yes'])
+        if (elems[elem_idx][1]['element_type'], elems[elem_idx + 1][1]['element_type']) in[('dance', 'dance'), ('acro', 'acro'), ('acro', 'dance'), ('dance', 'acro')]:
+            option = st.radio(elems[elem_idx][0] + ' + ' + elems[elem_idx + 1][0] + '?', ['no', 'yes'])
+            if option == 'yes':
+                st.session_state['combo'] += 0.1
 
     if st.button('Next'):
         st.session_state['state'] = 'results'
@@ -198,7 +204,7 @@ def results():
 
     results = pd.DataFrame([
         ['difficulty score (DS)', st.session_state['difficulty']],
-        ['combo bonus (CB)', 2],
+        ['combo bonus (CB)', st.session_state['combo']],
         ['skill requirements (SR)', 2],
         ['execution', st.session_state['execution']],
         ['artistry', st.session_state['artistry']],
