@@ -97,6 +97,9 @@ def detail_element(element):
             elif difficulty == 'B':
                 st.session_state['difficulty'] += 0.2
 
+    st.session_state['selected_elements'][st.session_state['current_element']
+                                          ][1]['difficulty'] = difficulty
+
     if st.button('Next'):
         st.session_state['current_element'] += 1
         st.experimental_rerun()
@@ -204,24 +207,48 @@ def combos():
 
         option = st.radio(elem[0], ['none'] + [e[0] for e in other_elems])
         if option != 'none':
-            st.session_state['combo'] += 0.1
+            if 'B' in [elem[0], [other_elem for other_elem in other_elems if other_elem[0] == option]]:
+                st.session_state['combo'] += 0.2
+            else:
+                st.session_state['combo'] += 0.1
 
     if st.button('Next'):
         st.session_state['state'] = 'results'
         st.experimental_rerun()
 
 
+def skill_requirements():
+    if 'reqs' not in st.session_state.keys():
+        st.session_state['reqs'] = 0
+
+    elems = st.session_state['selected_elements']
+    srs = 0
+
+    srs += len([e for e in elems if 'turn' in e[0]]) > 0
+    srs += len([e for e in elems if e[1]['element_type'] ==
+               'acro' and e[1]['difficulty'] in ['A', 'B']]) > 0
+    srs += len([e for e in elems if e[0] in ['handstand (1 sec)', 'handstand (2 sec)',
+               'cartwheel', 'roundoff', 'handstand to forward roll']]) > 0
+
+    st.session_state['reqs'] = srs * 0.5
+
+
 def results():
+    skill_requirements()
+
     st.subheader('results')
+    dscore = st.session_state['difficulty'] + \
+        st.session_state['combo'] + st.session_state['reqs']
+    escore = 10 + st.session_state['execution'] + st.session_state['artistry']
 
     results = pd.DataFrame([
         ['difficulty score (DS)', st.session_state['difficulty']],
         ['combo bonus (CB)', st.session_state['combo']],
-        ['skill requirements (SR)', 2],
+        ['skill requirements (SR)', st.session_state['reqs']],
         ['execution', st.session_state['execution']],
         ['artistry', st.session_state['artistry']],
-        ['D-score', 2],
-        ['E-score', 2],
+        ['D-score', dscore],
+        ['E-score', escore],
     ], columns=['rubric', 'score'])
 
     st.dataframe(results)
