@@ -4,7 +4,9 @@
       "elements": {
         "squat on mount": {
           "element_type": "mount",
-          "difficulty": "TA"
+          "difficulty": "TA",
+          "execution_mistakes": [3, 5],
+          "landing_mistakes": [3, 8, 9, 10]
         },
         "middle split mount": {
           "element_type": "mount",
@@ -241,7 +243,6 @@
     ">1x ½ turn on 2 feet during the entire routine"
   ],
   "general_execution_mistakes": {
-    "Wobble": ["small", "middle", "big"],
     "Bent arms or knees": ["small", "middle", "big"],
     "Open knees or legs": ["small", "middle"],
     "Clear doubts before element": ["small"],
@@ -265,7 +266,7 @@
     "Bad body form": ["small", "middle"],
     "Deep squat": ["middle"],
     "Support of 1 or 2 arms on mat": ["very big"],
-    "Fall on mat with knees or hips": ["very big"],
+    "Fall on mat with knees or hips or against apparatus": ["very big"],
     "Fall on or against apparatus": ["very big"],
     "Not land on feet first": ["very big"]
   },

@@ -77,10 +77,11 @@ def choose_elements():
 
 
 def detail_element(element):
+    cols = st.columns(2)
     if 'difficulty' not in st.session_state.keys():
         st.session_state['difficulty'] = 0
 
-    st.subheader(element[0])
+    cols[0].subheader(element[0])
     difficulty = element[1].get('difficulty', None)
     if difficulty is not None:
         if difficulty in ['TA', 'A']:
@@ -88,7 +89,7 @@ def detail_element(element):
         elif difficulty == 'B':
             st.session_state['difficulty'] += 0.2
 
-    for question in element[1]['element_questions']:
+    for question in element[1].get('element_questions', []):
         option = st.radio(question['question'], question['options'].keys())
         difficulty = question['options'][option].get('difficulty', None)
         if difficulty is not None:
@@ -99,6 +100,36 @@ def detail_element(element):
 
     st.session_state['selected_elements'][st.session_state['current_element']
                                           ][1]['difficulty'] = difficulty
+
+    cols[0].subheader('general execution mistakes')
+    mistakes = list(kb['general_execution_mistakes'].items())
+    relevant_mistakes = []
+    for e_idx in range(len(element[1].get('execution_mistakes', []))):
+        relevant_mistakes += [mistakes[e_idx]]
+
+    for mistake in relevant_mistakes:
+        option = cols[0].radio(mistake[0], ['none'] + mistake[1])
+        if option == 'small':
+            st.session_state['execution'] -= 0.1
+        elif option == 'medium':
+            st.session_state['execution'] -= 0.3
+        elif option == 'big':
+            st.session_state['execution'] -= 0.5
+
+    cols[1].subheader('general landing mistakes')
+    mistakes = list(kb['general_landing_mistakes'].items())
+    relevant_mistakes = []
+    for e_idx in range(len(element[1].get('landing_mistakes', []))):
+        relevant_mistakes += [mistakes[e_idx]]
+
+    for mistake in relevant_mistakes:
+        option = cols[1].radio(mistake[0], ['none'] + mistake[1])
+        if option == 'small':
+            st.session_state['execution'] -= 0.1
+        elif option == 'medium':
+            st.session_state['execution'] -= 0.3
+        elif option == 'big':
+            st.session_state['execution'] -= 0.5
 
     if st.button('Next'):
         st.session_state['current_element'] += 1
@@ -119,42 +150,6 @@ def apparatus_mistakes():
             st.session_state['execution'] -= 0.3
         elif option == 'big':
             st.session_state['execution'] -= 0.5
-    if st.button('Next'):
-        st.session_state['state'] = 'general_execution_mistakes'
-        st.experimental_rerun()
-
-
-def general_execution_mistakes():
-    st.subheader('general execution mistakes')
-    mistakes = kb['general_execution_mistakes']
-
-    for mistake in mistakes.items():
-        option = st.radio(mistake[0], ['none'] + mistake[1])
-        if option == 'small':
-            st.session_state['execution'] -= 0.1
-        elif option == 'medium':
-            st.session_state['execution'] -= 0.3
-        elif option == 'big':
-            st.session_state['execution'] -= 0.5
-
-    if st.button('Next'):
-        st.session_state['state'] = 'general_landing_mistakes'
-        st.experimental_rerun()
-
-
-def general_landing_mistakes():
-    st.subheader('general landing mistakes')
-    mistakes = kb['general_landing_mistakes']
-
-    for mistake in mistakes.items():
-        option = st.radio(mistake[0], ['none'] + mistake[1])
-        if option == 'small':
-            st.session_state['execution'] -= 0.1
-        elif option == 'medium':
-            st.session_state['execution'] -= 0.3
-        elif option == 'big':
-            st.session_state['execution'] -= 0.5
-
     if st.button('Next'):
         st.session_state['state'] = 'general_mistakes'
         st.experimental_rerun()
