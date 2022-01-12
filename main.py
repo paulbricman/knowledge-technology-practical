@@ -21,10 +21,8 @@ else:
             element = st.session_state['selected_elements'][st.session_state['current_element']]
             detail_element(element)
         else:
-            st.session_state['state'] = 'apparatus_mistakes'
+            st.session_state['state'] = 'general_mistakes'
             st.experimental_rerun()
-    elif st.session_state['state'] == 'apparatus_mistakes':
-        apparatus_mistakes()
     elif st.session_state['state'] == 'general_mistakes':
         general_mistakes()
     elif st.session_state['state'] == 'artistry':

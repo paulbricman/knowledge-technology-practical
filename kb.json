@@ -217,18 +217,7 @@
           "element_type": "dismount",
           "difficulty": "TA"
         }
-      },
-      "mistakes": [
-        {
-          "question": "Was the duration of the routine longer than 1:20 min?",
-          "options": {
-            "Yes": {
-              "execution": -0.1
-            },
-            "No": {}
-          }
-        }
-      ]
+      }
     }
   },
   "artisanry": [
@@ -271,21 +260,11 @@
     "Not land on feet first": ["very big"]
   },
   "general_mistakes": {
+    "Was the duration of the routine longer than 1:20 min?": ["small"],
     "Execute combination with fall": ["very big"],
     "No presentation to judge at start and/or end of routine": ["middle"],
     "Help from trainer": ["very big"],
     "Jewelry, visible underwear, not skin colored tape": ["middle"],
     "Begin routine before starting sign of jury": ["very big"]
-  },
-  "artistry": [
-    "Lack of confidence",
-    "Lack of personal style",
-    "Lack of variation in rhythm and speed of movements",
-    "Routine presented as isolated elements",
-    "Not enough use of the entire beam length",
-    "No sidewards choreography (needs to have at least 3 sideway steps)",
-    "No choreography/elements close to the beam (upperbody, thigh, head)",
-    "Lack of complexity and creativity in movements of choreography",
-    ">1x ½ turn on 2 feet during the entire routine"
-  ]
+  }
 }
