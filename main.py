@@ -8,6 +8,8 @@ st.set_page_config(
     layout='wide'
 )
 
+print(st.session_state.get('selected_elements', None))
+
 init_session_state()
 hero_section()
 
@@ -17,7 +19,6 @@ else:
     if st.session_state['state'] == 'element_walkthrough':
         if st.session_state['current_element'] < len(st.session_state['selected_elements']):
             element = st.session_state['selected_elements'][st.session_state['current_element']]
-
             detail_element(element)
         else:
             st.session_state['state'] = 'apparatus_mistakes'
@@ -28,7 +29,5 @@ else:
         general_mistakes()
     elif st.session_state['state'] == 'artistry':
         artistry()
-    elif st.session_state['state'] == 'combos':
-        combos()
     elif st.session_state['state'] == 'results':
         results()

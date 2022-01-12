@@ -80,6 +80,8 @@ def detail_element(element):
     cols = st.columns(2)
     if 'difficulty' not in st.session_state.keys():
         st.session_state['difficulty'] = 0
+    if 'execution' not in st.session_state.keys():
+        st.session_state['execution'] = 0
 
     cols[0].subheader(element[0])
     difficulty = element[1].get('difficulty', None)
@@ -89,8 +91,15 @@ def detail_element(element):
         elif difficulty == 'B':
             st.session_state['difficulty'] += 0.2
 
+    st.session_state['selected_elements'][st.session_state['current_element']
+                                          ][1]['info_element_questions'] = []
     for question in element[1].get('element_questions', []):
-        option = st.radio(question['question'], question['options'].keys())
+        option = cols[0].radio(question['question'],
+                               question['options'].keys())
+
+        st.session_state['selected_elements'][st.session_state['current_element']
+                                              ][1]['info_element_questions'] += [[question['question'], option]]
+
         difficulty = question['options'][option].get('difficulty', None)
         if difficulty is not None:
             if difficulty in ['TA', 'A']:
@@ -107,8 +116,15 @@ def detail_element(element):
     for e_idx in range(len(element[1].get('execution_mistakes', []))):
         relevant_mistakes += [mistakes[e_idx]]
 
+    st.session_state['selected_elements'][st.session_state['current_element']
+                                          ][1]['info_execution_mistakes'] = []
+
     for mistake in relevant_mistakes:
         option = cols[0].radio(mistake[0], ['none'] + mistake[1])
+
+        st.session_state['selected_elements'][st.session_state['current_element']
+                                              ][1]['info_execution_mistakes'] += [[mistake[0], option]]
+
         if option == 'small':
             st.session_state['execution'] -= 0.1
         elif option == 'medium':
@@ -122,14 +138,27 @@ def detail_element(element):
     for e_idx in range(len(element[1].get('landing_mistakes', []))):
         relevant_mistakes += [mistakes[e_idx]]
 
+    st.session_state['selected_elements'][st.session_state['current_element']
+                                          ][1]['info_landing_mistakes'] = []
+
     for mistake in relevant_mistakes:
         option = cols[1].radio(mistake[0], ['none'] + mistake[1])
+
+        st.session_state['selected_elements'][st.session_state['current_element']
+                                              ][1]['info_landing_mistakes'] += [[mistake[0], option]]
+
         if option == 'small':
             st.session_state['execution'] -= 0.1
         elif option == 'medium':
             st.session_state['execution'] -= 0.3
         elif option == 'big':
             st.session_state['execution'] -= 0.5
+
+    cols[0].subheader('combo info')
+    combo_option = cols[0].radio('Was this element combined with another one?', [
+                                 'none'] + [e[0] for e in st.session_state['selected_elements']])
+    st.session_state['selected_elements'][st.session_state['current_element']
+                                          ][1]['info_combo'] = combo_option
 
     if st.button('Next'):
         st.session_state['current_element'] += 1
@@ -186,7 +215,7 @@ def artistry():
             st.session_state['artistry'] -= 0.1
 
     if st.button('Next'):
-        st.session_state['state'] = 'combos'
+        st.session_state['state'] = 'results'
         st.experimental_rerun()
 
 
