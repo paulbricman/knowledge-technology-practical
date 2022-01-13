@@ -8,7 +8,7 @@ st.set_page_config(
     layout='wide'
 )
 
-print(st.session_state.get('selected_elements', None))
+print('---')
 
 init_session_state()
 hero_section()

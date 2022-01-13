@@ -67,9 +67,6 @@ def choose_elements():
 
     notes_section(col3)
 
-    missed_elements = 6 - (2 + len(selected_jumps) +
-                           len(selected_dances) + len(selected_acros))
-
     st.markdown('---')
     if st.button('Next'):
         st.session_state['state'] = 'element_walkthrough'
@@ -84,15 +81,10 @@ def detail_element(element):
         st.session_state['execution'] = 0
 
     cols[0].subheader(element[0])
-    difficulty = element[1].get('difficulty', None)
-    if difficulty is not None:
-        if difficulty in ['TA', 'A']:
-            st.session_state['difficulty'] += 0.1
-        elif difficulty == 'B':
-            st.session_state['difficulty'] += 0.2
-
     st.session_state['selected_elements'][st.session_state['current_element']
                                           ][1]['info_element_questions'] = []
+    difficulty = element[1].get('difficulty', None)
+
     for question in element[1].get('element_questions', []):
         option = cols[0].radio(question['question'],
                                question['options'].keys())
@@ -101,11 +93,6 @@ def detail_element(element):
                                               ][1]['info_element_questions'] += [[question['question'], option]]
 
         difficulty = question['options'][option].get('difficulty', None)
-        if difficulty is not None:
-            if difficulty in ['TA', 'A']:
-                st.session_state['difficulty'] += 0.1
-            elif difficulty == 'B':
-                st.session_state['difficulty'] += 0.2
 
     st.session_state['selected_elements'][st.session_state['current_element']
                                           ][1]['difficulty'] = difficulty
@@ -125,13 +112,6 @@ def detail_element(element):
         st.session_state['selected_elements'][st.session_state['current_element']
                                               ][1]['info_execution_mistakes'] += [[mistake[0], option]]
 
-        if option == 'small':
-            st.session_state['execution'] -= 0.1
-        elif option == 'medium':
-            st.session_state['execution'] -= 0.3
-        elif option == 'big':
-            st.session_state['execution'] -= 0.5
-
     cols[1].subheader('general landing mistakes')
     mistakes = list(kb['general_landing_mistakes'].items())
     relevant_mistakes = []
@@ -146,13 +126,6 @@ def detail_element(element):
 
         st.session_state['selected_elements'][st.session_state['current_element']
                                               ][1]['info_landing_mistakes'] += [[mistake[0], option]]
-
-        if option == 'small':
-            st.session_state['execution'] -= 0.1
-        elif option == 'medium':
-            st.session_state['execution'] -= 0.3
-        elif option == 'big':
-            st.session_state['execution'] -= 0.5
 
     cols[0].subheader('combo info')
     combo_option = cols[0].radio('Was this element combined with another one?', [
@@ -187,9 +160,12 @@ def apparatus_mistakes():
 def general_mistakes():
     st.subheader('general mistakes')
     mistakes = kb['general_mistakes']
+    st.session_state['general_mistakes'] = []
 
     for mistake in mistakes.items():
         option = st.radio(mistake[0], ['none'] + mistake[1])
+        st.session_state['general_mistakes'] += [[mistake[0], option]]
+
         if option == 'small':
             st.session_state['execution'] -= 0.1
         elif option == 'medium':
@@ -208,71 +184,125 @@ def artistry():
 
     st.subheader('artistry')
     mistakes = kb['artistry']
+    st.session_state['artistry_mistakes'] = []
 
     for mistake in mistakes:
         option = st.checkbox(mistake)
-        if option:
-            st.session_state['artistry'] -= 0.1
+        st.session_state['artistry_mistakes'] += [[mistake, option]]
 
     if st.button('Next'):
         st.session_state['state'] = 'results'
         st.experimental_rerun()
 
 
-def combos():
-    if 'combo' not in st.session_state.keys():
-        st.session_state['combo'] = 0
-
+def compute_skill_requirements():
     elems = st.session_state['selected_elements']
-    st.subheader('element combinations')
+    srs = [None] * 4
 
+    srs[0] = False
+    for elem in st.session_state['selected_elements']:
+        if elem[1]['element_type'] == 'dance':
+            if elem[1]['info_combo'] != 'none':
+                comboed_elem = [
+                    e for e in st.session_state['selected_elements'] if e[0] == elem[1]['info_combo']][0]
+                if comboed_elem[1]['element_type'] == 'dance':
+                    srs[0] = True
+
+    srs[1] = len([e for e in elems if 'turn' in e[0]]) > 0
+    srs[2] = len([e for e in elems if e[1]['element_type'] ==
+                  'acro' and e[1]['difficulty'] in ['A', 'B']]) > 0
+    srs[3] = len([e for e in elems if e[0] in ['handstand (1 sec)', 'handstand (2 sec)',
+                                               'cartwheel', 'roundoff', 'handstand to forward roll']]) > 0
+
+    return sum(srs) * 0.5, srs
+
+
+def compute_combo_bonus():
+    cb = []
+    cbs = []
+
+    for elem in st.session_state['selected_elements']:
+        if elem[1]['info_combo'] != 'none':
+            comboed_elem = [
+                e for e in st.session_state['selected_elements'] if e[0] == elem[1]['info_combo']][0]
+            if ['A', 'B'] == sorted([elem[1]['difficulty'], comboed_elem[1]['difficulty']]):
+                cb += [0.2]
+                cbs += [[elem[0], comboed_elem[0]]]
+            elif ['A', 'A'] == sorted([elem[1]['difficulty'], comboed_elem[1]['difficulty']]):
+                cb += [0.1]
+                cbs += [[elem[0], comboed_elem[0]]]
+
+    return cb, cbs
+
+
+def compute_difficulty_score():
+    elems = [[e[0], e[1]['difficulty']]
+             for e in st.session_state['selected_elements']]
+
+    difficulty = 0
     for elem in elems:
-        other_elems = [e for e in elems if e != elem]
+        if elem[1] in ['TA', 'A']:
+            difficulty += 0.1
+        else:
+            difficulty += 0.2
 
-        option = st.radio(elem[0], ['none'] + [e[0] for e in other_elems])
-        if option != 'none':
-            if 'B' in [elem[0], [other_elem for other_elem in other_elems if other_elem[0] == option]]:
-                st.session_state['combo'] += 0.2
-            else:
-                st.session_state['combo'] += 0.1
-
-    if st.button('Next'):
-        st.session_state['state'] = 'results'
-        st.experimental_rerun()
+    return difficulty, elems
 
 
-def skill_requirements():
-    if 'reqs' not in st.session_state.keys():
-        st.session_state['reqs'] = 0
+def compute_artistry():
+    artistry = 0
+    mistakes = st.session_state['artistry_mistakes']
 
-    elems = st.session_state['selected_elements']
-    srs = 0
+    for mistake in mistakes:
+        if mistake[1] == True:
+            artistry -= 0.1
 
-    srs += len([e for e in elems if 'turn' in e[0]]) > 0
-    srs += len([e for e in elems if e[1]['element_type'] ==
-               'acro' and e[1]['difficulty'] in ['A', 'B']]) > 0
-    srs += len([e for e in elems if e[0] in ['handstand (1 sec)', 'handstand (2 sec)',
-               'cartwheel', 'roundoff', 'handstand to forward roll']]) > 0
+    return artistry, [e[0] for e in mistakes if e[1] == True]
 
-    st.session_state['reqs'] = srs * 0.5
+
+def compute_execution():
+    mistakes = st.session_state['general_mistakes']
+
+    execution = 0
+
+    for mistake in mistakes:
+        if mistake[1] == 'small':
+            execution -= 0.1
+        elif mistake[1] == 'middle':
+            execution -= 0.3
+        elif mistake[1] == 'big':
+            execution -= 0.5
+
+    return execution, [e[0] for e in mistakes if e[1] != 'none']
 
 
 def results():
-    skill_requirements()
+    st.header('results')
 
-    st.subheader('results')
-    dscore = st.session_state['difficulty'] + \
-        st.session_state['combo'] + st.session_state['reqs']
-    escore = 10 + st.session_state['execution'] + st.session_state['artistry']
+    st.subheader('DS')
+    st.write(compute_difficulty_score())
+    st.subheader('SR')
+    st.write(compute_skill_requirements())
+    st.subheader('CB')
+    st.write(compute_combo_bonus())
+    st.subheader('artistry')
+    st.write(compute_artistry())
+    st.subheader('execution')
+    st.write(compute_execution())
 
-    results = pd.DataFrame([
-        ['difficulty score (DS)', st.session_state['difficulty']],
-        ['combo bonus (CB)', st.session_state['combo']],
-        ['skill requirements (SR)', st.session_state['reqs']],
-        ['execution', st.session_state['execution']],
-        ['artistry', st.session_state['artistry']],
-        ['D-score', dscore],
-        ['E-score', escore],
-    ], columns=['rubric', 'score'])
+    # st.subheader('results')
+    # dscore = st.session_state['difficulty'] + \
+    #     st.session_state['combo'] + st.session_state['reqs']
+    # escore = 10 + st.session_state['execution'] + st.session_state['artistry']
 
-    st.dataframe(results)
+    # results = pd.DataFrame([
+    #     ['difficulty score (DS)', st.session_state['difficulty']],
+    #     ['combo bonus (CB)', st.session_state['combo']],
+    #     ['skill requirements (SR)', st.session_state['reqs']],
+    #     ['execution', st.session_state['execution']],
+    #     ['artistry', st.session_state['artistry']],
+    #     ['D-score', dscore],
+    #     ['E-score', escore],
+    # ], columns=['rubric', 'score'])
+
+    # st.dataframe(results)
