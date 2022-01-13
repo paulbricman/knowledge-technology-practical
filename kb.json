@@ -10,21 +10,27 @@
         },
         "middle split mount": {
           "element_type": "mount",
-          "difficulty": "A"
+          "difficulty": "A",
+          "execution_mistakes": [1, 3, 6, 7],
+          "landing_mistakes": [3, 8, 9, 10]
         },
         "squat through the rear mount": {
           "element_type": "mount",
-          "difficulty": "A"
+          "difficulty": "A",
+          "execution_mistakes": [1, 3, 6, 7],
+          "landing_mistakes": [3, 8, 9, 10]
         },
         "jump to forward roll mount": {
           "element_type": "mount",
-          "difficulty": "B"
+          "difficulty": "B",
+          "execution_mistakes": [2, 3, 6, 7, 8],
+          "landing_mistakes": [2, 3, 6, 8, 9, 10]
         },
         "split leap": {
           "element_type": "jump",
           "element_questions": [
             {
-              "question": "What was the deviation from 180º?",
+              "question": "What was the deviation from a 180º splits?",
               "options": {
                 "0°": {
                   "difficulty": "A"
@@ -42,13 +48,15 @@
                 }
               }
             }
-          ]
+          ],
+          "execution_mistakes": [1, 3, 6, 7],
+          "landing_mistakes": [2, 3, 4, 6, 8, 9, 10]
         },
         "split jump": {
           "element_type": "jump",
           "element_questions": [
             {
-              "question": "What was the deviation from 180º?",
+              "question": "What was the deviation from a 180º splits?",
               "options": {
                 "0°": {
                   "difficulty": "B"
@@ -66,15 +74,18 @@
                 }
               }
             }
-          ]
+          ],
+          "execution_mistakes": [1, 3, 6, 7],
+          "landing_mistakes": [2, 3, 4, 6, 8, 9, 10]
         },
         "straight jump": {
           "element_type": "jump",
-          "difficulty": "TA"
+          "difficulty": "TA",
+          "execution_mistakes": [1, 2, 3, 4, 7],
+          "landing_mistakes": [2, 3, 4, 6, 8, 9, 10]
         },
         "cat leap": {
           "element_type": "jump",
-          "difficulty": "A",
           "element_questions": [
             {
               "question": "Was the leg exchange clear?",
@@ -99,19 +110,27 @@
                 }
               }
             }
-          ]
+          ],
+          "execution_mistakes": [3, 6, 7],
+          "landing_mistakes": [2, 3, 4, 6, 8, 9, 10]
         },
         "Fouetté half turn": {
           "element_type": "dance",
-          "difficulty": "TA"
+          "difficulty": "TA",
+          "execution_mistakes": [1, 3, 6, 7, 8],
+          "landing_mistakes": [2, 3, 4, 6, 8, 9, 10]
         },
         "1/1 turn pirouette": {
           "element_type": "dance",
-          "difficulty": "A"
+          "difficulty": "A",
+          "execution_mistakes": [3, 6, 7, 8],
+          "landing_mistakes": [2, 3, 4, 6, 8, 9, 10]
         },
         "1 ½ turn pirouette": {
           "element_type": "dance",
-          "difficulty": "B"
+          "difficulty": "B",
+          "execution_mistakes": [3, 6, 7, 8],
+          "landing_mistakes": [2, 3, 4, 6, 8, 9, 10]
         },
         "standing split": {
           "element_type": "dance",
@@ -126,12 +145,29 @@
                   "difficulty": "N/A"
                 }
               }
+            },
+            {
+              "question": "What was the deviation from a 180º splits?",
+              "options": {
+                "0°": {
+                  "difficulty": "A"
+                },
+                "0-90°": {
+                  "execution": -0.1,
+                  "difficulty": "A"
+                },
+                ">90º(under horizontal)": {
+                  "execution": -0.3,
+                  "difficulty": "A"
+                }
+              }
             }
-          ]
+          ],
+          "execution_mistakes": [1, 4, 6, 7],
+          "landing_mistakes": [2, 3, 4, 6, 8, 9, 10]
         },
-        "handstand (1 sec)": {
+        "handstand": {
           "element_type": "acro",
-          "difficulty": "TA",
           "element_questions": [
             {
               "question": "How long did the handstand hold?",
@@ -155,19 +191,21 @@
                 }
               }
             }
-          ]
-        },
-        "handstand (2 sec)": {
-          "element_type": "acro",
-          "difficulty": "A"
+          ],
+          "execution_mistakes": [1, 2, 3, 4, 6, 7],
+          "landing_mistakes": [2, 3, 4, 6, 8, 9, 10]
         },
         "handstand to forward roll": {
           "element_type": "acro",
-          "difficulty": "B"
+          "difficulty": "B",
+          "execution_mistakes": [1, 2, 3, 4, 6, 7, 8],
+          "landing_mistakes": [2, 3, 4, 8, 9, 10]
         },
         "forward roll": {
           "element_type": "acro",
-          "difficulty": "TA"
+          "difficulty": "TA",
+          "execution_mistakes": [2, 3, 6, 8],
+          "landing_mistakes": [2, 3, 8, 9, 10]
         },
         "forward roll without hand support": {
           "element_type": "acro",
@@ -183,11 +221,15 @@
                 }
               }
             }
-          ]
+          ],
+          "execution_mistakes": [2, 3, 6, 8],
+          "landing_mistakes": [2, 3, 8, 9, 10]
         },
         "cartwheel": {
           "element_type": "acro",
-          "difficulty": "A"
+          "difficulty": "A",
+          "execution_mistakes": [1, 3, 4, 6, 7, 8],
+          "landing_mistakes": [2, 3, 4, 6, 8, 9, 10]
         },
         "roundoff": {
           "element_type": "acro",
@@ -203,19 +245,27 @@
                 }
               }
             }
-          ]
+          ],
+          "execution_mistakes": [1, 3, 4, 6, 7, 8],
+          "landing_mistakes": [2, 3, 4, 6, 7, 8, 9, 10]
         },
         "front / back walkover": {
           "element_type": "acro",
-          "difficulty": "A"
+          "difficulty": "A",
+          "execution_mistakes": [1, 3, 4, 7, 8],
+          "landing_mistakes": [2, 3, 4, 6, 8, 9, 10]
         },
         "front / back salto tucked dismount ": {
           "element_type": "dismount",
-          "difficulty": "A"
+          "difficulty": "A",
+          "execution_mistakes": [2, 3, 6, 7, 9],
+          "landing_mistakes": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
         },
         "front walkover dismount": {
           "element_type": "dismount",
-          "difficulty": "TA"
+          "difficulty": "TA",
+          "execution_mistakes": [1, 3, 4, 6, 7, 9],
+          "landing_mistakes": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
         }
       }
     }
