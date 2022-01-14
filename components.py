@@ -261,11 +261,11 @@ def compute_artistry():
 
 
 def compute_execution():
-    mistakes = st.session_state['general_mistakes']
-
+    general_mistakes = st.session_state['general_mistakes']
+    element_mistakes = []
     execution = 0
 
-    for mistake in mistakes:
+    for mistake in general_mistakes:
         if mistake[1] == 'small':
             execution -= 0.1
         elif mistake[1] == 'middle':
@@ -273,7 +273,30 @@ def compute_execution():
         elif mistake[1] == 'big':
             execution -= 0.5
 
-    return execution, [e[0] for e in mistakes if e[1] != 'none']
+    for elem in st.session_state['selected_elements']:
+        for mistake in elem[1]['info_execution_mistakes']:
+            if mistake[1] != 'none':
+                element_mistakes += [[elem[0], mistake[0], mistake[1]]]
+
+            if mistake[1] == 'small':
+                execution -= 0.1
+            elif mistake[1] == 'middle':
+                execution -= 0.3
+            elif mistake[1] == 'big':
+                execution -= 0.5
+
+        for mistake in elem[1]['info_landing_mistakes']:
+            if mistake[1] != 'none':
+                element_mistakes += [[elem[0], mistake[0], mistake[1]]]
+
+            if mistake[1] == 'small':
+                execution -= 0.1
+            elif mistake[1] == 'middle':
+                execution -= 0.3
+            elif mistake[1] == 'big':
+                execution -= 0.5
+
+    return execution, [e[0] for e in general_mistakes if e[1] != 'none'], element_mistakes
 
 
 def results():
