@@ -74,7 +74,9 @@ def choose_elements():
 
 
 def detail_element(element):
-    cols = st.columns(2)
+    cols = st.columns(3)
+    notes_section(cols[2])
+
     if 'difficulty' not in st.session_state.keys():
         st.session_state['difficulty'] = 0
     if 'execution' not in st.session_state.keys():
@@ -87,7 +89,7 @@ def detail_element(element):
 
     for question in element[1].get('element_questions', []):
         option = cols[0].radio(question['question'],
-                               question['options'].keys())
+                               question['options'].keys(), key=element[0])
 
         st.session_state['selected_elements'][st.session_state['current_element']
                                               ][1]['info_element_questions'] += [[question['question'], option]]
@@ -100,14 +102,22 @@ def detail_element(element):
     cols[0].subheader('general execution mistakes')
     mistakes = list(kb['general_execution_mistakes'].items())
     relevant_mistakes = []
-    for e_idx in range(len(element[1].get('execution_mistakes', []))):
-        relevant_mistakes += [mistakes[e_idx]]
+    for e_idx in element[1].get('execution_mistakes', []):
+        relevant_mistakes += [mistakes[e_idx - 1]]
 
     st.session_state['selected_elements'][st.session_state['current_element']
                                           ][1]['info_execution_mistakes'] = []
 
     for mistake in relevant_mistakes:
-        option = cols[0].radio(mistake[0], ['none'] + mistake[1])
+        if len(mistake[1]) > 1:
+            option = cols[0].radio(mistake[0], ['none'] +
+                                   mistake[1], key=element[0])
+        else:
+            option = cols[0].checkbox(mistake[0])
+            if option:
+                option = mistake[1]
+            else:
+                option = 'none'
 
         st.session_state['selected_elements'][st.session_state['current_element']
                                               ][1]['info_execution_mistakes'] += [[mistake[0], option]]
@@ -115,21 +125,29 @@ def detail_element(element):
     cols[1].subheader('general landing mistakes')
     mistakes = list(kb['general_landing_mistakes'].items())
     relevant_mistakes = []
-    for e_idx in range(len(element[1].get('landing_mistakes', []))):
-        relevant_mistakes += [mistakes[e_idx]]
+    for e_idx in element[1].get('landing_mistakes', []):
+        relevant_mistakes += [mistakes[e_idx - 1]]
 
     st.session_state['selected_elements'][st.session_state['current_element']
                                           ][1]['info_landing_mistakes'] = []
 
     for mistake in relevant_mistakes:
-        option = cols[1].radio(mistake[0], ['none'] + mistake[1])
+        if len(mistake[1]) > 1:
+            option = cols[1].radio(mistake[0], ['none'] +
+                                   mistake[1], key=element[0])
+        else:
+            option = cols[1].checkbox(mistake[0])
+            if option:
+                option = mistake[1]
+            else:
+                option = 'none'
 
         st.session_state['selected_elements'][st.session_state['current_element']
                                               ][1]['info_landing_mistakes'] += [[mistake[0], option]]
 
     cols[0].subheader('combo info')
     combo_option = cols[0].radio('Was this element combined with another one?', [
-                                 'none'] + [e[0] for e in st.session_state['selected_elements']])
+                                 'none'] + [e[0] for e in st.session_state['selected_elements']], key=element[0])
     st.session_state['selected_elements'][st.session_state['current_element']
                                           ][1]['info_combo'] = combo_option
 
