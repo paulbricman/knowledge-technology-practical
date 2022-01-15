@@ -74,8 +74,13 @@ def choose_elements():
 
 
 def detail_element(element):
-    cols = st.columns(3)
-    notes_section(cols[2])
+    cols = st.columns([3, 3, 1])
+    notes = f'''    - small mistakes: {st.session_state["small_mistakes"]}
+    - big mistakes: {st.session_state["big_mistakes"]}
+    - falls: {st.session_state["falls"]}
+    - connections: {st.session_state["connections"]}
+    '''
+    cols[2].info(notes)
 
     if 'difficulty' not in st.session_state.keys():
         st.session_state['difficulty'] = 0
