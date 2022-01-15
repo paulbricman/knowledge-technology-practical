@@ -322,6 +322,18 @@ def compute_execution():
     return execution, [e[0] for e in general_mistakes if e[1] != 'none'], element_mistakes
 
 
+def compute_n_score():
+    elem_count = len(st.session_state['selected_elements'])
+    if elem_count in [4, 5]:
+        return -4
+    elif elem_count in [2, 3]:
+        return -6
+    elif elem_count == 1:
+        return -8
+    elif elem_count == 0:
+        return -10
+
+
 def results():
     st.header('results')
 
@@ -335,6 +347,8 @@ def results():
     st.write(compute_artistry())
     st.subheader('execution')
     st.write(compute_execution())
+    st.subheader('n score')
+    st.write(compute_n_score())
 
     # st.subheader('results')
     # dscore = st.session_state['difficulty'] + \
