@@ -8,7 +8,7 @@ kb = json.load(open('kb.json', 'r'))
 
 
 def hero_section():
-    st.markdown('# 🤸 gymnastics expert system')
+    st.markdown('# 🤸 Gymnastics Expert System')
     st.markdown('')
     st.info(
         'This project has been implemented in the context of [Knowledge Technology Practical](https://www.rug.nl/ocasys/fwn/vak/show?code=WBAI014-05).')
@@ -16,15 +16,15 @@ def hero_section():
 
 
 def notes_section(parent):
-    parent.markdown('### notes')
+    parent.markdown('### Notes')
     st.session_state['small_mistakes'] = parent.number_input(
-        'small mistakes', step=1, value=st.session_state['small_mistakes'])
+        'Small mistakes', min_value=0, step=1, value=st.session_state['small_mistakes'])
     st.session_state['big_mistakes'] = parent.number_input(
-        'big mistakes', step=1, value=st.session_state['big_mistakes'])
+        'Big mistakes', min_value=0, step=1, value=st.session_state['big_mistakes'])
     st.session_state['falls'] = parent.number_input(
-        'falls', step=1, value=st.session_state['falls'])
+        'Falls', min_value=0, step=1, value=st.session_state['falls'])
     st.session_state['connections'] = parent.number_input(
-        'connections', step=1, value=st.session_state['connections'])
+        'Connections', min_value=0, step=1, value=st.session_state['connections'])
 
 
 def choose_elements():
@@ -35,17 +35,18 @@ def choose_elements():
     acros = filter_dict(elements, lambda x: x[1]['element_type'] == 'acro')
     dismounts = filter_dict(elements, lambda x: ' dismount' in x[0])
 
+
     col1, col2, col3 = st.columns([1, 1, 1])
     selected_mount = col1.radio(
-        'What mount element is the gymnast performing?', mounts)
+        'What mount is the gymnast performing?', mounts)
 
-    col1.caption('What jump elements is the gymnast performing?')
+    col1.caption('What jumps is the gymnast performing?')
     selected_jumps = []
     for jump in jumps:
         if col1.checkbox(jump):
             selected_jumps += [jump]
 
-    col1.caption('What dance elements is the gymnast performing?')
+    col1.caption('What turns is the gymnast performing?')
     selected_dances = []
     for dance in dances:
         if col1.checkbox(dance):
@@ -87,7 +88,10 @@ def detail_element(element):
     if 'execution' not in st.session_state.keys():
         st.session_state['execution'] = 0
 
-    cols[0].subheader(element[0])
+    st.session_state['selected_elements'][st.session_state['current_element']
+    ][1]['valid'] = 1
+
+    cols[0].header(element[0])
     st.session_state['selected_elements'][st.session_state['current_element']
                                           ][1]['info_element_questions'] = []
     difficulty = element[1].get('difficulty', None)
@@ -104,7 +108,7 @@ def detail_element(element):
     st.session_state['selected_elements'][st.session_state['current_element']
                                           ][1]['difficulty'] = difficulty
 
-    cols[0].subheader('general execution mistakes')
+    cols[0].subheader('Execution:')
     mistakes = list(kb['general_execution_mistakes'].items())
     relevant_mistakes = []
     for e_idx in element[1].get('execution_mistakes', []):
@@ -127,7 +131,7 @@ def detail_element(element):
         st.session_state['selected_elements'][st.session_state['current_element']
                                               ][1]['info_execution_mistakes'] += [[mistake[0], option]]
 
-    cols[1].subheader('general landing mistakes')
+    cols[1].subheader('Landing:')
     mistakes = list(kb['general_landing_mistakes'].items())
     relevant_mistakes = []
     for e_idx in element[1].get('landing_mistakes', []):
@@ -146,12 +150,28 @@ def detail_element(element):
                 option = mistake[1]
             else:
                 option = 'none'
-
         st.session_state['selected_elements'][st.session_state['current_element']
                                               ][1]['info_landing_mistakes'] += [[mistake[0], option]]
 
-    cols[0].subheader('combo info')
-    combo_option = cols[0].radio('Was this element combined with another one?', [
+    #Specific code for falls
+    check = cols[1].checkbox("Fall")
+    if check:
+        nstd_check = cols[1].checkbox("Element not landed on feet first")
+        if nstd_check:
+            #-1 and no DS CB and SR
+            st.session_state['selected_elements'][st.session_state['current_element']][1]['valid'] = 0
+            st.session_state['selected_elements'][st.session_state['current_element']
+            ][1]['info_landing_mistakes'] += [['Fall(not landed)', 'very big']]
+        else:
+            st.session_state['selected_elements'][st.session_state['current_element']
+            ][1]['info_landing_mistakes'] += [['Fall', 'very big']]
+    else:
+        st.session_state['selected_elements'][st.session_state['current_element']
+        ][1]['info_landing_mistakes'] += [['Fall', 'none']]
+
+
+    cols[0].subheader('Combination:')
+    combo_option = cols[0].selectbox('Was this element combined with another one?', [
                                  'none'] + [e[0] for e in st.session_state['selected_elements']], key=element[0])
     st.session_state['selected_elements'][st.session_state['current_element']
                                           ][1]['info_combo'] = combo_option
@@ -160,13 +180,14 @@ def detail_element(element):
         st.session_state['current_element'] += 1
         st.experimental_rerun()
 
-
+# This function is unused
+'''
 def apparatus_mistakes():
     if 'execution' not in st.session_state.keys():
         st.session_state['execution'] = 0
 
     mistakes = kb['apparatuses']['beam']['mistakes']
-    st.subheader('apparatus mistakes')
+    st.subheader('Apparatus specific mistakes')
     for question in mistakes:
         option = st.radio(question['question'], question['options'].keys())
         if option == 'small':
@@ -175,18 +196,30 @@ def apparatus_mistakes():
             st.session_state['execution'] -= 0.3
         elif option == 'big':
             st.session_state['execution'] -= 0.5
+        elif option == 'very big':
+            st.session_state['execution'] -= 1.0
     if st.button('Next'):
         st.session_state['state'] = 'general_mistakes'
         st.experimental_rerun()
-
+'''
 
 def general_mistakes():
-    st.subheader('general mistakes')
+    st.subheader('General mistakes')
     mistakes = kb['general_mistakes']
     st.session_state['general_mistakes'] = []
 
     for mistake in mistakes.items():
-        option = st.radio(mistake[0], ['none'] + mistake[1])
+        #option = st.radio(mistake[0], ['none'] + mistake[1])
+        #st.session_state['general_mistakes'] += [[mistake[0], option]]
+
+        #@paul can you check whether here the correct value is deducted?
+        #As in: if the duration is longer than 1:20 it should deduct small and help from trainer
+        #is -1 + no DS/CB/SR etc
+        option = st.checkbox(mistake[0])
+        if option:
+            option = mistake[1]
+        else:
+            option = 'none'
         st.session_state['general_mistakes'] += [[mistake[0], option]]
 
         if option == 'small':
@@ -195,6 +228,8 @@ def general_mistakes():
             st.session_state['execution'] -= 0.3
         elif option == 'big':
             st.session_state['execution'] -= 0.5
+        elif option == 'very big':
+            st.session_state['execution'] -= 1.0
 
     if st.button('Next'):
         st.session_state['state'] = 'artistry'
@@ -205,7 +240,7 @@ def artistry():
     if 'artistry' not in st.session_state.keys():
         st.session_state['artistry'] = 0
 
-    st.subheader('artistry')
+    st.subheader('Artistry')
     mistakes = kb['artistry']
     st.session_state['artistry_mistakes'] = []
 
@@ -221,15 +256,49 @@ def artistry():
 def compute_skill_requirements():
     elems = st.session_state['selected_elements']
     srs = [None] * 4
-
+    # This requirement is not valid - need comparison with 180º
     srs[0] = False
     for elem in st.session_state['selected_elements']:
-        if elem[1]['element_type'] == 'dance':
+        # go through all elements
+        if elem[1]['element_type'] == ('dance' or 'jump'):
+            # if element is a turn or a jump check if a combination is done
             if elem[1]['info_combo'] != 'none':
-                comboed_elem = [
-                    e for e in st.session_state['selected_elements'] if e[0] == elem[1]['info_combo']][0]
-                if comboed_elem[1]['element_type'] == 'dance':
-                    srs[0] = True
+                # Combo found
+                flag = 0
+                for l in elem[1]['info_landing_mistakes']:
+                    # check whether this first element of the combination had a
+                    # landing mistake(the combo doesn't count then)
+                    if l[1] != 'none':
+                        # there is a landing mistake so combo doesnt count
+                        flag = 1
+                if flag == 0:
+                    # 1st element counts towards combo, now find 2nd element
+                    comboed_elem = [
+                        e for e in st.session_state['selected_elements'] if e[0] == elem[1]['info_combo']][0]
+                    if comboed_elem[1]['element_type'] == ('dance' or 'jump'):
+                        # 2nd element follows dance requirement
+                        flag1 == 0
+                        for l in comboed_elem[1]['info_landing_mistakes']:
+                            # check whether this second element of the combination had a
+                            # landing mistake(the combo doesn't count then)
+                            if l[1] == 'very big':
+                                # there was a fall so combo doesnt count
+                                flag1 = 1
+                        if flag1 == 0:
+                            # 2nd element counts towards combo now check whether there was a jump at 180
+                            if elem[1]['element_type'] == ('Split jump' or 'Split leap'):
+                                for q in elem[1]['info_element_questions']:
+                                    if q[0] == 'What was the deviation from a 180º splits?':
+                                        if q[1] == '0º':
+                                            srs[0] = True
+                                            break
+                            if comboed_elem[1]['element_type'] == ('Split jump' or 'Split leap'):
+                                for q in elem[1]['info_element_questions']:
+                                    if q[0] == 'What was the deviation from a 180º splits?':
+                                        if q[1] == '0º':
+                                            srs[0] = True
+                                            break
+
 
     srs[1] = len([e for e in elems if 'turn' in e[0]]) > 0
     srs[2] = len([e for e in elems if e[1]['element_type'] ==
@@ -318,6 +387,8 @@ def compute_execution():
                 execution -= 0.3
             elif mistake[1] == 'big':
                 execution -= 0.5
+            elif mistake[1] == 'very big':
+                execution -= 1.0
 
     return execution, [e[0] for e in general_mistakes if e[1] != 'none'], element_mistakes
 
