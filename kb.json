@@ -229,11 +229,11 @@
             {
               "question": "Did hands touch beam?",
               "options": {
-                "Yes": {
-                  "difficulty": "TA"
-                },
                 "No": {
                   "difficulty": "B"
+                },
+                "Yes": {
+                  "difficulty": "TA"
                 }
               }
             }
@@ -255,11 +255,11 @@
             {
               "question": "Did the feet land at different timings or the beam did not vibrate?",
               "options": {
-                "Yes": {
-                  "difficulty": "A"
-                },
                 "No": {
                   "difficulty": "B"
+                },
+                "Yes": {
+                  "difficulty": "A"
                 }
               }
             }

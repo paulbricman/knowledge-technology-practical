@@ -304,7 +304,7 @@ def compute_skill_requirements():
 
 
 def compute_combo_bonus():
-    cb = []
+    cb = 0
     cbs = []
 
     for elem in st.session_state['selected_elements']:
@@ -339,10 +339,10 @@ def compute_combo_bonus():
                     if flag == 0:
                         # 2nd element counts towards combo now check element difficulty to find bonus
                         if ['A', 'B'] == sorted([elem[1]['difficulty'], comboed_elem[1]['difficulty']]):
-                            cb += [0.2]
+                            cb += 0.2
                             cbs += [[elem[0], comboed_elem[0]]]
                         elif ['A', 'A'] == sorted([elem[1]['difficulty'], comboed_elem[1]['difficulty']]):
-                            cb += [0.1]
+                            cb += 0.1
                             cbs += [[elem[0], comboed_elem[0]]]
 
         '''if elem[1]['info_combo'] != 'none':
@@ -372,21 +372,21 @@ def compute_difficulty_score():
                 difficulty += 0.2
                 counter[2] += 1
                 total_cnt += 1
-                counted_elems += elem
+                counted_elems.append(elem)
     for elem in elems:
         if total_cnt != 7:
             if elem[1] == ['A']:
                 difficulty += 0.1
                 counter[1] += 1
                 total_cnt += 1
-                counted_elems += elem
+                counted_elems.append(elem)
     for elem in elems:
         if total_cnt != 7:
             if elem[1] == ['TA']:
                 difficulty += 0.1
                 counter[0] += 1
                 total_cnt += 1
-                counted_elems += elem
+                counted_elems.append(elem)
 
     return difficulty, counted_elems, counter
 
@@ -469,34 +469,32 @@ def compute_n_score():
 
 
 def results():
-    st.header('results')
-
+    st.header('Results')
+    print(st.session_state['selected_elements'])
     st.subheader('D-Score')
     diff, d_elems, counter = compute_difficulty_score()
     SR_score, SR = compute_skill_requirements()
     CB_score, CB = compute_combo_bonus()
-    d_score = diff+SR_score+sum(CB_score)
+    d_score = diff+SR_score+CB_score
 
-    st.text("Difficulty ({}".format(counter[0]) + "TA + {}".format(counter[1]) + "A + {}".format(counter[2]) + "B)        +{}P. \n".format(diff) +
-            "Composition Requirements                                                                                  +{}P. \n".format(
-                SR_score) +
-            "Connection Value                                                                                          +{}P. \n".format(
-                CB_score) +
+    st.text("Difficulty ({}".format(counter[0]) + "TA + {}".format(counter[1]) + "A + {}".format(counter[2]) + "B)                                                                                +{}P. \n".format(diff) +
+            "Composition Requirements                                                                                  +{}P. \n".format(SR_score) +
+            "Connection Value                                                                                          +{}P. \n".format(CB_score) +
             "--------------------------------------------------------------------------------------------------------------\n" +
             "D-score                                                                                                   ={}P.".format(d_score))
 
     st.subheader(
-        'E-Score                                                                                               10.00P.')
+        'E-Score')
     art_score, art_mistakes = compute_artistry()
     ex_score, gen_mistakes, ex_mistakes = compute_execution()
     n_score = compute_n_score()
     e_score = 10.00+ex_score+art_score
 
-    st.text("Execution                                                           {}P.".format(ex_score) + "                    \n" +
-            "Artistry                                                            {}P.".format(
-                art_score) + "                 {}P.\n".format(ex_score+art_score) +
+    st.text("E-score                                                                                                   10.0P.\n" +
+            "Execution                                                           {}P.".format(ex_score) + "                    \n" +
+            "Artistry                                                            {}P.".format(art_score) + "                                {}P.\n".format(ex_score+art_score) +
             "---------------------------------------------------------------------------------------------------------------\n" +
-            "E-score                                                                                                       ={}P.".format(e_score))
+            "E-score                                                                                                   ={}P.".format(e_score))
 
     st.text("Final score     ={}P".format(e_score+d_score))
     if n_score != 0:
