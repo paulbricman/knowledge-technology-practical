@@ -35,7 +35,6 @@ def choose_elements():
     acros = filter_dict(elements, lambda x: x[1]['element_type'] == 'acro')
     dismounts = filter_dict(elements, lambda x: ' dismount' in x[0])
 
-
     col1, col2, col3 = st.columns([1, 1, 1])
     selected_mount = col1.radio(
         'What mount is the gymnast performing?', mounts)
@@ -76,18 +75,13 @@ def choose_elements():
 
 def detail_element(element):
     cols = st.columns([3, 3, 1])
-    notes = f'''    - small mistakes: {st.session_state["small_mistakes"]}
-    - big mistakes: {st.session_state["big_mistakes"]}
-    - falls: {st.session_state["falls"]}
-    - connections: {st.session_state["connections"]}
-    '''
-    cols[2].info(notes)
+    notes_section(cols[2])
 
     if 'difficulty' not in st.session_state.keys():
         st.session_state['difficulty'] = 0
 
     st.session_state['selected_elements'][st.session_state['current_element']
-    ][1]['valid'] = 1
+                                          ][1]['valid'] = 1
 
     cols[0].header(element[0])
     st.session_state['selected_elements'][st.session_state['current_element']
@@ -153,32 +147,32 @@ def detail_element(element):
         st.session_state['selected_elements'][st.session_state['current_element']
                                               ][1]['info_landing_mistakes'] += [[mistake[0], option]]
 
-    #Specific code for falls
+    # Specific code for falls
     check = cols[1].checkbox("Fall")
     if check:
         nstd_check = cols[1].checkbox("Element not landed on feet first")
         if nstd_check:
-            #-1 and no DS CB and SR
+            # -1 and no DS CB and SR
             st.session_state['selected_elements'][st.session_state['current_element']][1]['valid'] = 0
             st.session_state['selected_elements'][st.session_state['current_element']
-            ][1]['info_landing_mistakes'] += [['Fall(not landed)', 'very big']]
+                                                  ][1]['info_landing_mistakes'] += [['Fall(not landed)', 'very big']]
         else:
             st.session_state['selected_elements'][st.session_state['current_element']
-            ][1]['info_landing_mistakes'] += [['Fall', 'very big']]
+                                                  ][1]['info_landing_mistakes'] += [['Fall', 'very big']]
     else:
         st.session_state['selected_elements'][st.session_state['current_element']
-        ][1]['info_landing_mistakes'] += [['Fall', 'none']]
-
+                                              ][1]['info_landing_mistakes'] += [['Fall', 'none']]
 
     cols[0].subheader('Combination:')
     combo_option = cols[0].selectbox('Was this element combined with another one?', [
-                                 'none'] + [e[0] for e in st.session_state['selected_elements']], key=element[0])
+        'none'] + [e[0] for e in st.session_state['selected_elements']], key=element[0])
     st.session_state['selected_elements'][st.session_state['current_element']
                                           ][1]['info_combo'] = combo_option
 
     if st.button('Next'):
         st.session_state['current_element'] += 1
         st.experimental_rerun()
+
 
 # This function is unused
 '''
@@ -203,6 +197,7 @@ def apparatus_mistakes():
         st.experimental_rerun()
 '''
 
+
 def general_mistakes():
     st.subheader('General mistakes')
     mistakes = kb['general_mistakes']
@@ -212,9 +207,9 @@ def general_mistakes():
         #option = st.radio(mistake[0], ['none'] + mistake[1])
         #st.session_state['general_mistakes'] += [[mistake[0], option]]
 
-        #@paul can you check whether here the correct value is deducted?
-        #As in: if the duration is longer than 1:20 it should deduct small and help from trainer
-        #is -1 + no DS/CB/SR etc
+        # @paul can you check whether here the correct value is deducted?
+        # As in: if the duration is longer than 1:20 it should deduct small and help from trainer
+        # is -1 + no DS/CB/SR etc
         option = st.checkbox(mistake[0])
         if option:
             option = mistake[1]
@@ -290,14 +285,13 @@ def compute_skill_requirements():
                             if elem[1]['element_type'] == ('Split jump' or 'Split leap'):
                                 for q in elem[1]['info_element_questions']:
                                     if q[0] == 'What was the deviation from a 180º splits?' and q[1] == '0º':
-                                            srs[0] = True
-                                            break
+                                        srs[0] = True
+                                        break
                             if comboed_elem[1]['element_type'] == ('Split jump' or 'Split leap'):
                                 for q in elem[1]['info_element_questions']:
                                     if q[0] == 'What was the deviation from a 180º splits?' and q[1] == '0º':
-                                            srs[0] = True
-                                            break
-
+                                        srs[0] = True
+                                        break
 
     srs[1] = len([e for e in elems if 'turn' in e[0]]) > 0
     srs[2] = len([e for e in elems if e[1]['element_type'] ==
@@ -368,7 +362,7 @@ def compute_difficulty_score():
              for e in st.session_state['selected_elements'] if e[1]['valid'] == 1]
     counted_elems = []
     difficulty = 0
-    counter = [0, 0, 0] #idx0=TA, idx1=A, idx2=B
+    counter = [0, 0, 0]  # idx0=TA, idx1=A, idx2=B
     total_cnt = 0
 
     for elem in elems:
@@ -478,24 +472,28 @@ def results():
 
     st.subheader('D-Score')
     diff, d_elems, counter = compute_difficulty_score()
-    SR_score,SR = compute_skill_requirements()
+    SR_score, SR = compute_skill_requirements()
     CB_score, CB = compute_combo_bonus()
     d_score = diff+SR_score+CB_score
 
     st.text("Difficulty ({}".format(counter[0]), "TA + {}".format(counter[1]), "A + {}".format(counter[2]), "B)        +{}P. \n".format(diff),
-            "Composition Requirements                                                                                  +{}P. \n".format(SR_score),
-            "Connection Value                                                                                          +{}P. \n".format(CB_score),
+            "Composition Requirements                                                                                  +{}P. \n".format(
+                SR_score),
+            "Connection Value                                                                                          +{}P. \n".format(
+                CB_score),
             "--------------------------------------------------------------------------------------------------------------\n",
             "D-score                                                                                                   ={}P.".format(d_score))
 
-    st.subheader('E-Score                                                                                               10.00P.')
+    st.subheader(
+        'E-Score                                                                                               10.00P.')
     art_score, art_mistakes = compute_artistry()
     ex_score, gen_mistakes, ex_mistakes = compute_execution()
     n_score = compute_n_score()
     e_score = 10.00+ex_score+art_score
 
     st.text("Execution                                                           {}P.".format(ex_score), "                    \n",
-            "Artistry                                                            {}P.".format(art_score), "                 {}P.\n".format(ex_score+art_score),
+            "Artistry                                                            {}P.".format(
+                art_score), "                 {}P.\n".format(ex_score+art_score),
             "---------------------------------------------------------------------------------------------------------------\n",
             "E-score                                                                                                       ={}P.".format(e_score))
 
