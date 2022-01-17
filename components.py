@@ -273,7 +273,7 @@ def compute_skill_requirements():
                         e for e in st.session_state['selected_elements'] if e[0] == elem[1]['info_combo']][0]
                     if comboed_elem[1]['element_type'] == ('dance' or 'jump'):
                         # 2nd element follows dance requirement
-                        flag1 == 0
+                        flag1 = 0
                         for l in comboed_elem[1]['info_landing_mistakes']:
                             # check whether this second element of the combination had a
                             # landing mistake(the combo doesn't count then)
@@ -474,14 +474,14 @@ def results():
     diff, d_elems, counter = compute_difficulty_score()
     SR_score, SR = compute_skill_requirements()
     CB_score, CB = compute_combo_bonus()
-    d_score = diff+SR_score+CB_score
+    d_score = diff+SR_score+sum(CB_score)
 
-    st.text("Difficulty ({}".format(counter[0]), "TA + {}".format(counter[1]), "A + {}".format(counter[2]), "B)        +{}P. \n".format(diff),
+    st.text("Difficulty ({}".format(counter[0]) + "TA + {}".format(counter[1]) + "A + {}".format(counter[2]) + "B)        +{}P. \n".format(diff) +
             "Composition Requirements                                                                                  +{}P. \n".format(
-                SR_score),
+                SR_score) +
             "Connection Value                                                                                          +{}P. \n".format(
-                CB_score),
-            "--------------------------------------------------------------------------------------------------------------\n",
+                CB_score) +
+            "--------------------------------------------------------------------------------------------------------------\n" +
             "D-score                                                                                                   ={}P.".format(d_score))
 
     st.subheader(
@@ -491,10 +491,10 @@ def results():
     n_score = compute_n_score()
     e_score = 10.00+ex_score+art_score
 
-    st.text("Execution                                                           {}P.".format(ex_score), "                    \n",
+    st.text("Execution                                                           {}P.".format(ex_score) + "                    \n" +
             "Artistry                                                            {}P.".format(
-                art_score), "                 {}P.\n".format(ex_score+art_score),
-            "---------------------------------------------------------------------------------------------------------------\n",
+                art_score) + "                 {}P.\n".format(ex_score+art_score) +
+            "---------------------------------------------------------------------------------------------------------------\n" +
             "E-score                                                                                                       ={}P.".format(e_score))
 
     st.text("Final score     ={}P".format(e_score+d_score))
