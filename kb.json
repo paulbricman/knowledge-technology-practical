@@ -5,29 +5,29 @@
         "Squat on mount": {
           "element_type": "mount",
           "difficulty": "TA",
-          "execution_mistakes": [3, 5],
-          "landing_mistakes": [3, 8],
+          "execution_mistakes": [4, 5, 10],
+          "landing_mistakes": [1, 8],
           "valid": 0
         },
         "Middle split mount": {
           "element_type": "mount",
           "difficulty": "A",
-          "execution_mistakes": [1, 3, 6, 7],
-          "landing_mistakes": [3, 8],
+          "execution_mistakes": [1, 5, 6, 7, 10],
+          "landing_mistakes": [1, 8],
           "valid": 0
         },
         "Squat through the rear mount": {
           "element_type": "mount",
           "difficulty": "A",
-          "execution_mistakes": [1, 3, 6, 7],
-          "landing_mistakes": [3, 8],
+          "execution_mistakes": [1, 5, 6, 7, 10],
+          "landing_mistakes": [1, 8],
           "valid": 0
         },
         "Jump to forward roll mount": {
           "element_type": "mount",
           "difficulty": "B",
-          "execution_mistakes": [2, 3, 6, 7, 8],
-          "landing_mistakes": [2, 3, 6, 8],
+          "execution_mistakes": [2, 5, 6, 7, 8, 10],
+          "landing_mistakes": [1, 2, 4, 8],
           "valid": 0
         },
         "Split leap": {
@@ -54,8 +54,8 @@
               }
             }
           ],
-          "execution_mistakes": [1, 3, 6, 7],
-          "landing_mistakes": [2, 3, 4, 6, 8]
+          "execution_mistakes": [1, 5, 6, 7, 10],
+          "landing_mistakes": [1, 2, 4, 5, 8]
         },
         "Split jump": {
           "element_type": "jump",
@@ -81,15 +81,15 @@
               }
             }
           ],
-          "execution_mistakes": [1, 3, 6, 7],
-          "landing_mistakes": [2, 3, 4, 6, 8]
+          "execution_mistakes": [1, 5, 6, 7, 10],
+          "landing_mistakes": [1, 2, 4, 5, 8]
         },
         "Straight jump": {
           "element_type": "jump",
           "difficulty": "TA",
           "valid": 0,
-          "execution_mistakes": [1, 2, 3, 4, 7],
-          "landing_mistakes": [2, 3, 4, 6, 8]
+          "execution_mistakes": [1, 2, 3, 5, 7, 10],
+          "landing_mistakes": [1, 2, 4, 5, 8]
         },
         "Cat leap": {
           "element_type": "jump",
@@ -119,29 +119,29 @@
               }
             }
           ],
-          "execution_mistakes": [3, 6, 7],
-          "landing_mistakes": [2, 3, 4, 6, 8]
+          "execution_mistakes": [5, 6, 7, 10],
+          "landing_mistakes": [1, 2, 4, 5, 8]
         },
         "Fouetté half turn": {
           "element_type": "dance",
           "valid": 0,
           "difficulty": "TA",
-          "execution_mistakes": [1, 3, 6, 7, 8],
-          "landing_mistakes": [2, 3, 4, 6, 8]
+          "execution_mistakes": [1, 5, 6, 7, 8, 10],
+          "landing_mistakes": [1, 2, 4, 5, 8]
         },
         "1/1 Turn pirouette": {
           "element_type": "dance",
           "valid": 0,
           "difficulty": "A",
-          "execution_mistakes": [3, 6, 7, 8],
-          "landing_mistakes": [2, 3, 4, 6, 8]
+          "execution_mistakes": [5, 6, 7, 8, 10],
+          "landing_mistakes": [1, 2, 4, 5, 8]
         },
         "1½ Turn pirouette": {
           "element_type": "dance",
           "difficulty": "B",
           "valid": 0,
-          "execution_mistakes": [3, 6, 7, 8],
-          "landing_mistakes": [2, 3, 4, 6, 8]
+          "execution_mistakes": [5, 6, 7, 8, 10],
+          "landing_mistakes": [1, 2, 4, 5, 8]
         },
         "Standing split": {
           "element_type": "dance",
@@ -175,8 +175,8 @@
               }
             }
           ],
-          "execution_mistakes": [1, 4, 6, 7],
-          "landing_mistakes": [2, 3, 4, 6, 8]
+          "execution_mistakes": [1, 3, 5, 6, 7, 10],
+          "landing_mistakes": [1, 2, 4, 5, 8]
         },
         "Handstand": {
           "element_type": "acro",
@@ -205,22 +205,22 @@
               }
             }
           ],
-          "execution_mistakes": [1, 2, 3, 4, 6, 7],
-          "landing_mistakes": [2, 3, 4, 6, 8]
+          "execution_mistakes": [1, 2, 3, 5, 6, 7, 10],
+          "landing_mistakes": [1, 2, 4, 5, 8]
         },
         "Handstand to forward roll": {
           "element_type": "acro",
           "difficulty": "B",
           "valid": 0,
-          "execution_mistakes": [1, 2, 3, 4, 6, 7, 8],
-          "landing_mistakes": [2, 3, 4, 8]
+          "execution_mistakes": [1, 2, 3, 5, 6, 7, 8, 10],
+          "landing_mistakes": [1, 4, 5, 8]
         },
         "Forward roll": {
           "element_type": "acro",
           "difficulty": "TA",
           "valid": 0,
-          "execution_mistakes": [2, 3, 6, 8],
-          "landing_mistakes": [2, 3, 8]
+          "execution_mistakes": [2, 5, 6, 8, 10],
+          "landing_mistakes": [1, 4, 8]
         },
         "Forward roll without hand support": {
           "element_type": "acro",
@@ -238,15 +238,15 @@
               }
             }
           ],
-          "execution_mistakes": [2, 3, 6, 8],
-          "landing_mistakes": [2, 3, 8]
+          "execution_mistakes": [2, 5, 6, 8, 10],
+          "landing_mistakes": [1, 4, 8]
         },
         "Cartwheel": {
           "element_type": "acro",
           "difficulty": "A",
           "valid": 0,
-          "execution_mistakes": [1, 3, 4, 6, 7, 8],
-          "landing_mistakes": [2, 3, 4, 6, 8]
+          "execution_mistakes": [1, 3, 5, 6, 7, 8, 10],
+          "landing_mistakes": [1, 2, 4, 5, 8]
         },
         "Roundoff": {
           "element_type": "acro",
@@ -264,28 +264,28 @@
               }
             }
           ],
-          "execution_mistakes": [1, 3, 4, 6, 7, 8],
-          "landing_mistakes": [2, 3, 4, 6, 7, 8]
+          "execution_mistakes": [1, 3, 5, 6, 7, 8, 10],
+          "landing_mistakes": [1, 2, 4, 5, 7, 8]
         },
         "Front / back walkover": {
           "element_type": "acro",
           "difficulty": "A",
           "valid": 0,
-          "execution_mistakes": [1, 3, 4, 7, 8],
-          "landing_mistakes": [2, 3, 4, 6, 8]
+          "execution_mistakes": [1, 3, 5, 7, 8, 10],
+          "landing_mistakes": [1, 2, 4, 5, 8]
         },
         "Front / back salto tucked dismount ": {
           "element_type": "dismount",
           "difficulty": "A",
           "valid": 0,
-          "execution_mistakes": [2, 3, 6, 7, 9],
+          "execution_mistakes": [2, 5, 6, 7, 9, 10],
           "landing_mistakes": [1, 2, 3, 4, 5, 6, 7, 8]
         },
         "Front walkover dismount": {
           "element_type": "dismount",
           "difficulty": "TA",
           "valid": 0,
-          "execution_mistakes": [1, 3, 4, 6, 7, 9],
+          "execution_mistakes": [1, 3, 5, 6, 7, 9, 10],
           "landing_mistakes": [1, 2, 3, 4, 5, 6, 7, 8]
         }
       }
@@ -305,33 +305,33 @@
   "general_execution_mistakes": {
     "Bent arms or knees": ["small", "middle", "big"],
     "Open knees or legs": ["small", "middle"],
-    "Clear doubts before element": ["small"],
     "Not enough straightening of body": ["small", "middle"],
     "Failure to meet technical requirements of dance element": [
       "small",
       "middle",
       "big"
     ],
+    "Clear doubts before element": ["small"],
     "Body lines": ["small"],
     "Flexed feet": ["small"],
     "Precision": ["small"],
-    "Dismount too close to apparatus": ["middle"]
+    "Dismount too close to apparatus": ["middle"],
+    "Help from trainer": ["very big"]
   },
   "general_landing_mistakes": {
+    "Lack of balance": ["small", "middle"],
+    "Bad body form": ["small", "middle"],
     "Separated legs (only applicable to dismount on beam) ": ["small"],
     "Extra swing of arms": ["small"],
-    "Lack of balance": ["small", "middle"],
     "Extra steps/small hop": ["small"],
     "Big step": ["middle"],
-    "Bad body form": ["small", "middle"],
     "Deep squat": ["middle"],
     "Support of 1 or 2 arms on beam/mat": ["very big"]
   },
   "general_mistakes": {
     "Was the duration of the routine longer than 1:20 min?": ["small"],
     "No presentation to judge at start and/or end of routine": ["middle"],
-    "Help from trainer": ["very big"],
     "Jewelry, visible underwear, not skin colored tape": ["middle"],
-    "Begin routine before starting sign of jury": ["very big"]
+    "Begin routine before starting sign of jury": ["zero"]
   }
 }

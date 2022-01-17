@@ -85,8 +85,6 @@ def detail_element(element):
 
     if 'difficulty' not in st.session_state.keys():
         st.session_state['difficulty'] = 0
-    if 'execution' not in st.session_state.keys():
-        st.session_state['execution'] = 0
 
     st.session_state['selected_elements'][st.session_state['current_element']
     ][1]['valid'] = 1
@@ -125,6 +123,8 @@ def detail_element(element):
             option = cols[0].checkbox(mistake[0])
             if option:
                 option = mistake[1]
+                if mistake[0] == 'Help from trainer':
+                    st.session_state['selected_elements'][st.session_state['current_element']][1]['valid'] = 0
             else:
                 option = 'none'
 
@@ -222,6 +222,7 @@ def general_mistakes():
             option = 'none'
         st.session_state['general_mistakes'] += [[mistake[0], option]]
 
+        '''
         if option == 'small':
             st.session_state['execution'] -= 0.1
         elif option == 'medium':
@@ -229,7 +230,7 @@ def general_mistakes():
         elif option == 'big':
             st.session_state['execution'] -= 0.5
         elif option == 'very big':
-            st.session_state['execution'] -= 1.0
+            st.session_state['execution'] -= 1.0 '''
 
     if st.button('Next'):
         st.session_state['state'] = 'artistry'
@@ -256,7 +257,7 @@ def artistry():
 def compute_skill_requirements():
     elems = st.session_state['selected_elements']
     srs = [None] * 4
-    # This requirement is not valid - need comparison with 180º
+
     srs[0] = False
     for elem in st.session_state['selected_elements']:
         # go through all elements
@@ -288,14 +289,12 @@ def compute_skill_requirements():
                             # 2nd element counts towards combo now check whether there was a jump at 180
                             if elem[1]['element_type'] == ('Split jump' or 'Split leap'):
                                 for q in elem[1]['info_element_questions']:
-                                    if q[0] == 'What was the deviation from a 180º splits?':
-                                        if q[1] == '0º':
+                                    if q[0] == 'What was the deviation from a 180º splits?' and q[1] == '0º':
                                             srs[0] = True
                                             break
                             if comboed_elem[1]['element_type'] == ('Split jump' or 'Split leap'):
                                 for q in elem[1]['info_element_questions']:
-                                    if q[0] == 'What was the deviation from a 180º splits?':
-                                        if q[1] == '0º':
+                                    if q[0] == 'What was the deviation from a 180º splits?' and q[1] == '0º':
                                             srs[0] = True
                                             break
 
@@ -314,7 +313,44 @@ def compute_combo_bonus():
     cbs = []
 
     for elem in st.session_state['selected_elements']:
-        if elem[1]['info_combo'] != 'none':
+        if elem[1]['info_combo'] != 'none' and elem[1]['valid'] == 1:
+            # Combo found
+            flag = 0
+            for l in elem[1]['info_landing_mistakes']:
+                # check whether this first element of the combination had a
+                # landing mistake(the combo doesn't count then)
+                if l[1] != 'none':
+                    # there is a landing mistake so combo doesnt count
+                    flag = 1
+
+            if flag == 0:
+                # 1st element counts towards combo, now find 2nd element
+                comboed_elem = [
+                    e for e in st.session_state['selected_elements'] if e[0] == elem[1]['info_combo'] and e[1]['valid'] == 1]
+
+                # Check whether this combo was not already calculated or is a combination with itself
+                for comb in cbs:
+                    if (comb[0] == comboed_elem[0] and comb[1] == elem[0]) or (comboed_elem[0] == elem[0]):
+                        flag = 1
+
+                if flag == 0:
+                    for l in comboed_elem[1]['info_landing_mistakes']:
+                        # check whether the second element of the combination has a
+                        # fall (the combo doesn't count then)
+                        if l[1] == 'very big':
+                            # there was a fall so combo doesnt count
+                            flag = 1
+
+                    if flag == 0:
+                        # 2nd element counts towards combo now check element difficulty to find bonus
+                        if ['A', 'B'] == sorted([elem[1]['difficulty'], comboed_elem[1]['difficulty']]):
+                            cb += [0.2]
+                            cbs += [[elem[0], comboed_elem[0]]]
+                        elif ['A', 'A'] == sorted([elem[1]['difficulty'], comboed_elem[1]['difficulty']]):
+                            cb += [0.1]
+                            cbs += [[elem[0], comboed_elem[0]]]
+
+        '''if elem[1]['info_combo'] != 'none':
             comboed_elem = [
                 e for e in st.session_state['selected_elements'] if e[0] == elem[1]['info_combo']][0]
             if ['A', 'B'] == sorted([elem[1]['difficulty'], comboed_elem[1]['difficulty']]):
@@ -322,23 +358,42 @@ def compute_combo_bonus():
                 cbs += [[elem[0], comboed_elem[0]]]
             elif ['A', 'A'] == sorted([elem[1]['difficulty'], comboed_elem[1]['difficulty']]):
                 cb += [0.1]
-                cbs += [[elem[0], comboed_elem[0]]]
+                cbs += [[elem[0], comboed_elem[0]]]'''
 
     return cb, cbs
 
 
 def compute_difficulty_score():
     elems = [[e[0], e[1]['difficulty']]
-             for e in st.session_state['selected_elements']]
-
+             for e in st.session_state['selected_elements'] if e[1]['valid'] == 1]
+    counted_elems = []
     difficulty = 0
-    for elem in elems:
-        if elem[1] in ['TA', 'A']:
-            difficulty += 0.1
-        else:
-            difficulty += 0.2
+    counter = [0, 0, 0] #idx0=TA, idx1=A, idx2=B
+    total_cnt = 0
 
-    return difficulty, elems
+    for elem in elems:
+        if total_cnt != 7:
+            if elem[1] == ['B']:
+                difficulty += 0.2
+                counter[2] += 1
+                total_cnt += 1
+                counted_elems += elem
+    for elem in elems:
+        if total_cnt != 7:
+            if elem[1] == ['A']:
+                difficulty += 0.1
+                counter[1] += 1
+                total_cnt += 1
+                counted_elems += elem
+    for elem in elems:
+        if total_cnt != 7:
+            if elem[1] == ['TA']:
+                difficulty += 0.1
+                counter[0] += 1
+                total_cnt += 1
+                counted_elems += elem
+
+    return difficulty, counted_elems, counter
 
 
 def compute_artistry():
@@ -362,33 +417,44 @@ def compute_execution():
             execution -= 0.1
         elif mistake[1] == 'middle':
             execution -= 0.3
-        elif mistake[1] == 'big':
-            execution -= 0.5
+        elif mistake[1] == 'zero':
+            execution = 0
 
-    for elem in st.session_state['selected_elements']:
-        for mistake in elem[1]['info_execution_mistakes']:
-            if mistake[1] != 'none':
-                element_mistakes += [[elem[0], mistake[0], mistake[1]]]
+    if execution != 0:
+        for elem in st.session_state['selected_elements']:
+            for mistake in elem[1]['info_execution_mistakes']:
+                if mistake[1] != 'none':
+                    element_mistakes += [[elem[0], mistake[0], mistake[1]]]
 
-            if mistake[1] == 'small':
-                execution -= 0.1
-            elif mistake[1] == 'middle':
-                execution -= 0.3
-            elif mistake[1] == 'big':
-                execution -= 0.5
+                if mistake[1] == 'small':
+                    execution -= 0.1
+                elif mistake[1] == 'middle':
+                    execution -= 0.3
+                elif mistake[1] == 'big':
+                    execution -= 0.5
+                elif mistake[1] == 'very big':
+                    execution -= 1.0
 
-        for mistake in elem[1]['info_landing_mistakes']:
-            if mistake[1] != 'none':
-                element_mistakes += [[elem[0], mistake[0], mistake[1]]]
+            landing_ex = 0
+            fall = 0
+            for mistake in elem[1]['info_landing_mistakes']:
+                if mistake[1] != 'none':
+                    element_mistakes += [[elem[0], mistake[0], mistake[1]]]
 
-            if mistake[1] == 'small':
-                execution -= 0.1
-            elif mistake[1] == 'middle':
-                execution -= 0.3
-            elif mistake[1] == 'big':
-                execution -= 0.5
-            elif mistake[1] == 'very big':
-                execution -= 1.0
+                if mistake[1] == 'small':
+                    landing_ex += 0.1
+                elif mistake[1] == 'middle':
+                    landing_ex += 0.3
+                elif mistake[1] == 'big':
+                    landing_ex += 0.5
+                elif mistake[1] == 'very big':
+                    landing_ex = 1.0
+                    fall = 1
+            # capped deduction at 0.8 if there was no fall
+            if fall == 0 and landing_ex > 0.8:
+                execution -= 0.8
+            else:
+                execution -= landing_ex
 
     return execution, [e[0] for e in general_mistakes if e[1] != 'none'], element_mistakes
 
@@ -396,31 +462,47 @@ def compute_execution():
 def compute_n_score():
     elem_count = len(st.session_state['selected_elements'])
     if elem_count in [4, 5]:
-        return -4
+        return 4
     elif elem_count in [2, 3]:
-        return -6
+        return 6
     elif elem_count == 1:
-        return -8
+        return 8
     elif elem_count == 0:
-        return -10
+        return 10
+    else:
+        return 0
 
 
 def results():
     st.header('results')
 
-    st.subheader('DS')
-    st.write(compute_difficulty_score())
-    st.subheader('SR')
-    st.write(compute_skill_requirements())
-    st.subheader('CB')
-    st.write(compute_combo_bonus())
-    st.subheader('artistry')
-    st.write(compute_artistry())
-    st.subheader('execution')
-    st.write(compute_execution())
-    st.subheader('n score')
-    st.write(compute_n_score())
+    st.subheader('D-Score')
+    diff, d_elems, counter = compute_difficulty_score()
+    SR_score,SR = compute_skill_requirements()
+    CB_score, CB = compute_combo_bonus()
+    d_score = diff+SR_score+CB_score
 
+    st.text("Difficulty ({}".format(counter[0]), "TA + {}".format(counter[1]), "A + {}".format(counter[2]), "B)        +{}P. \n".format(diff),
+            "Composition Requirements                                                                                  +{}P. \n".format(SR_score),
+            "Connection Value                                                                                          +{}P. \n".format(CB_score),
+            "--------------------------------------------------------------------------------------------------------------\n",
+            "D-score                                                                                                   ={}P.".format(d_score))
+
+    st.subheader('E-Score                                                                                               10.00P.')
+    art_score, art_mistakes = compute_artistry()
+    ex_score, gen_mistakes, ex_mistakes = compute_execution()
+    n_score = compute_n_score()
+    e_score = 10.00+ex_score+art_score
+
+    st.text("Execution                                                           {}P.".format(ex_score), "                    \n",
+            "Artistry                                                            {}P.".format(art_score), "                 {}P.\n".format(ex_score+art_score),
+            "---------------------------------------------------------------------------------------------------------------\n",
+            "E-score                                                                                                       ={}P.".format(e_score))
+
+    st.text("Final score     ={}P".format(e_score+d_score))
+    if n_score != 0:
+        st.text("Final score after neutral deduction for short exercise applied \n"
+                "{}P.".format(e_score+d_score), " - {}P.(short exercise)".format(n_score), " = {}P.".format(e_score + d_score - n_score))
     # st.subheader('results')
     # dscore = st.session_state['difficulty'] + \
     #     st.session_state['combo'] + st.session_state['reqs']
