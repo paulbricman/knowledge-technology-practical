@@ -86,20 +86,22 @@ def detail_element(element):
     cols[0].header(element[0])
     st.session_state['selected_elements'][st.session_state['current_element']
                                           ][1]['info_element_questions'] = []
-    difficulty = st.session_state['selected_elements'][st.session_state['current_element']
-                                                       ][1].get('difficulty', None)
+    difficulty = st.session_state['selected_elements'][st.session_state['current_element']][1].get('difficulty', None)
 
     for question in element[1].get('element_questions', []):
-        option = cols[0].radio(question['question'],
-                               question['options'].keys(), key=element[0])
+        if isinstance(question['options'], list):
+            option = cols[0].radio(question['question'],
+                                   question['options'], key=element[0])
+        else:
+            option = cols[0].radio(question['question'],
+                                question['options'].keys(), key=element[0])
 
         st.session_state['selected_elements'][st.session_state['current_element']
                                               ][1]['info_element_questions'] += [[question['question'], option]]
 
         difficulty = question['options'][option].get('difficulty', difficulty)
 
-    st.session_state['selected_elements'][st.session_state['current_element']
-                                          ][1]['difficulty'] = difficulty
+    st.session_state['selected_elements'][st.session_state['current_element']][1]['difficulty'] = difficulty
 
     cols[0].subheader('Execution:')
     mistakes = list(kb['general_execution_mistakes'].items())
@@ -220,7 +222,7 @@ def compute_skill_requirements():
     srs = [None] * 4
 
     srs[0] = False
-    for elem in st.session_state['selected_elements']:
+    for elem in elems:
         # go through all elements
         if elem[1]['element_type'] == ('dance' or 'jump'):
             # if element is a turn or a jump check if a combination is done
@@ -236,7 +238,7 @@ def compute_skill_requirements():
                 if flag == 0:
                     # 1st element counts towards combo, now find 2nd element
                     comboed_elem = [
-                        e for e in st.session_state['selected_elements'] if e[0] == elem[1]['info_combo']][0]
+                        e for e in elems if e[0] == elem[1]['info_combo'] and e[1]['valid'] == 1][0]
                     if comboed_elem[1]['element_type'] == ('dance' or 'jump'):
                         # 2nd element follows dance requirement
                         flag1 = 0
@@ -262,8 +264,15 @@ def compute_skill_requirements():
     srs[1] = len([e for e in elems if 'turn' in e[0]]) > 0
     srs[2] = len([e for e in elems if e[1]['element_type'] ==
                   'acro' and e[1]['difficulty'] in ['A', 'B']]) > 0
-    srs[3] = len([e for e in elems if e[0] in ['handstand (1 sec)', 'handstand (2 sec)',
-                                               'cartwheel', 'roundoff', 'handstand to forward roll']]) > 0
+
+    handstand = [elem for elem in elems if elem[0] == "Handstand"][0]
+    for q in handstand[1]["info_element_questions"]:
+        if q[0] == "Did the handstand reach vertical (90º)?":
+            if q[1]["info_element_questions"][1] == "yes":
+                srs[3] = len([e for e in elems if e[0] in ['Handstand',
+                                                           'Cartwheel', 'Roundoff', 'Handstand to forward roll']]) > 0
+            else:
+                srs[3] = len([e for e in elems if e[0] in ['Cartwheel', 'Roundoff', 'Handstand to forward roll']]) > 0
 
     return sum(srs) * 0.5, srs
 
@@ -372,6 +381,18 @@ def compute_execution():
 
     if execution != 0:
         for elem in st.session_state['selected_elements']:
+            for answer in elem[1]['info_element_questions']:
+                if answer[0] == "What was the deviation from a 180º splits?":
+                    if answer[1] == "0-90°" or "<20°":
+                        execution -= 0.1
+                    elif answer[1] == ">90º(under horizontal)" or "20º - 45º":
+                        execution -= 0.3
+                if answer[0] == "Were both legs above horizontal?":
+                    if answer[1] == "No, one/both legs were under horizontal":
+                        execution -= 0.3
+                    elif answer[1] == "No, one/both legs were on horizontal":
+                        execution -= 0.1
+
             for mistake in elem[1]['info_execution_mistakes']:
                 if mistake[1] != 'none':
                     element_mistakes += [[elem[0], mistake[0], mistake[1]]]
@@ -425,7 +446,10 @@ def compute_n_score():
 
 def results():
     st.header('Results')
-    print(st.session_state['selected_elements'])
+
+    import json
+    json.dump(st.session_state['selected_elements'], open('myfile.json', 'w'))
+
     st.subheader('D-Score')
     diff, d_elems, counter = compute_difficulty_score()
     SR_score, SR = compute_skill_requirements()
@@ -451,7 +475,7 @@ def results():
             "---------------------------------------------------------------------------------------------------------------\n" +
             "E-score                                                                                                   ={}P.".format(e_score))
 
-    st.text("Final score     ={}P".format(e_score+d_score))
+    st.metric(label="Final score", value=e_score+d_score)
     if n_score != 0:
         st.text("Final score after neutral deduction for short exercise applied \n" +
                 "{}P.".format(e_score+d_score) + " - {}P.(short exercise)".format(n_score) + " = {}P.".format(e_score + d_score - n_score))
