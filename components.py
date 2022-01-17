@@ -174,31 +174,6 @@ def detail_element(element):
         st.session_state['current_element'] += 1
         st.experimental_rerun()
 
-
-# This function is unused
-'''
-def apparatus_mistakes():
-    if 'execution' not in st.session_state.keys():
-        st.session_state['execution'] = 0
-
-    mistakes = kb['apparatuses']['beam']['mistakes']
-    st.subheader('Apparatus specific mistakes')
-    for question in mistakes:
-        option = st.radio(question['question'], question['options'].keys())
-        if option == 'small':
-            st.session_state['execution'] -= 0.1
-        elif option == 'medium':
-            st.session_state['execution'] -= 0.3
-        elif option == 'big':
-            st.session_state['execution'] -= 0.5
-        elif option == 'very big':
-            st.session_state['execution'] -= 1.0
-    if st.button('Next'):
-        st.session_state['state'] = 'general_mistakes'
-        st.experimental_rerun()
-'''
-
-
 def general_mistakes():
     st.subheader('General mistakes')
     mistakes = kb['general_mistakes']
@@ -217,16 +192,6 @@ def general_mistakes():
         else:
             option = 'none'
         st.session_state['general_mistakes'] += [[mistake[0], option]]
-
-        '''
-        if option == 'small':
-            st.session_state['execution'] -= 0.1
-        elif option == 'medium':
-            st.session_state['execution'] -= 0.3
-        elif option == 'big':
-            st.session_state['execution'] -= 0.5
-        elif option == 'very big':
-            st.session_state['execution'] -= 1.0 '''
 
     if st.button('Next'):
         st.session_state['state'] = 'artistry'
@@ -344,16 +309,6 @@ def compute_combo_bonus():
                         elif ['A', 'A'] == sorted([elem[1]['difficulty'], comboed_elem[1]['difficulty']]):
                             cb += 0.1
                             cbs += [[elem[0], comboed_elem[0]]]
-
-        '''if elem[1]['info_combo'] != 'none':
-            comboed_elem = [
-                e for e in st.session_state['selected_elements'] if e[0] == elem[1]['info_combo']][0]
-            if ['A', 'B'] == sorted([elem[1]['difficulty'], comboed_elem[1]['difficulty']]):
-                cb += [0.2]
-                cbs += [[elem[0], comboed_elem[0]]]
-            elif ['A', 'A'] == sorted([elem[1]['difficulty'], comboed_elem[1]['difficulty']]):
-                cb += [0.1]
-                cbs += [[elem[0], comboed_elem[0]]]'''
 
     return cb, cbs
 
