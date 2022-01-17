@@ -86,7 +86,8 @@ def detail_element(element):
     cols[0].header(element[0])
     st.session_state['selected_elements'][st.session_state['current_element']
                                           ][1]['info_element_questions'] = []
-    difficulty = element[1].get('difficulty', None)
+    difficulty = st.session_state['selected_elements'][st.session_state['current_element']
+                                                       ][1].get('difficulty', None)
 
     for question in element[1].get('element_questions', []):
         option = cols[0].radio(question['question'],
@@ -95,7 +96,7 @@ def detail_element(element):
         st.session_state['selected_elements'][st.session_state['current_element']
                                               ][1]['info_element_questions'] += [[question['question'], option]]
 
-        difficulty = question['options'][option].get('difficulty', None)
+        difficulty = question['options'][option].get('difficulty', difficulty)
 
     st.session_state['selected_elements'][st.session_state['current_element']
                                           ][1]['difficulty'] = difficulty
@@ -320,7 +321,7 @@ def compute_combo_bonus():
             if flag == 0:
                 # 1st element counts towards combo, now find 2nd element
                 comboed_elem = [
-                    e for e in st.session_state['selected_elements'] if e[0] == elem[1]['info_combo'] and e[1]['valid'] == 1]
+                    e for e in st.session_state['selected_elements'] if e[0] == elem[1]['info_combo'] and e[1]['valid'] == 1][0]
 
                 # Check whether this combo was not already calculated or is a combination with itself
                 for comb in cbs:
@@ -499,8 +500,8 @@ def results():
 
     st.text("Final score     ={}P".format(e_score+d_score))
     if n_score != 0:
-        st.text("Final score after neutral deduction for short exercise applied \n"
-                "{}P.".format(e_score+d_score), " - {}P.(short exercise)".format(n_score), " = {}P.".format(e_score + d_score - n_score))
+        st.text("Final score after neutral deduction for short exercise applied \n" +
+                "{}P.".format(e_score+d_score) + " - {}P.(short exercise)".format(n_score) + " = {}P.".format(e_score + d_score - n_score))
     # st.subheader('results')
     # dscore = st.session_state['difficulty'] + \
     #     st.session_state['combo'] + st.session_state['reqs']
