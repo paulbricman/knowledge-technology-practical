@@ -330,6 +330,7 @@ def compute_combo_bonus():
 def compute_difficulty_score():
     elems = [[e[0], e[1]['difficulty']]
              for e in st.session_state['selected_elements'] if e[1]['valid'] == 1]
+
     counted_elems = []
     difficulty = 0
     counter = [0, 0, 0]  # idx0=TA, idx1=A, idx2=B
@@ -337,21 +338,21 @@ def compute_difficulty_score():
 
     for elem in elems:
         if total_cnt != 7:
-            if elem[1] == ['B']:
+            if elem[1] == 'B':
                 difficulty += 0.2
                 counter[2] += 1
                 total_cnt += 1
                 counted_elems.append(elem)
     for elem in elems:
         if total_cnt != 7:
-            if elem[1] == ['A']:
+            if elem[1] == 'A':
                 difficulty += 0.1
                 counter[1] += 1
                 total_cnt += 1
                 counted_elems.append(elem)
     for elem in elems:
         if total_cnt != 7:
-            if elem[1] == ['TA']:
+            if elem[1] == 'TA':
                 difficulty += 0.1
                 counter[0] += 1
                 total_cnt += 1
@@ -452,11 +453,9 @@ def compute_n_score():
 def results():
     st.header('Results')
 
-    import json
-    json.dump(st.session_state['selected_elements'], open('myfile.json', 'w'))
-
     st.subheader('D-Score')
     diff, d_elems, counter = compute_difficulty_score()
+    print('DS', diff, d_elems, counter)
     SR_score, SR = compute_skill_requirements()
     CB_score, CB = compute_combo_bonus()
     d_score = diff+SR_score+CB_score
