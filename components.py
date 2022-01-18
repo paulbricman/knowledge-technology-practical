@@ -268,15 +268,16 @@ def compute_skill_requirements():
     srs[2] = len([e for e in elems if e[1]['element_type'] ==
                   'acro' and e[1]['difficulty'] in ['A', 'B']]) > 0
 
-    handstand = [elem for elem in elems if elem[0] == "Handstand"][0]
-    for q in handstand[1]["info_element_questions"]:
-        if q[0] == "Did the handstand reach vertical (90º)?":
-            if q[1]["info_element_questions"][1] == "yes":
-                srs[3] = len([e for e in elems if e[0] in ['Handstand',
-                                                           'Cartwheel', 'Roundoff', 'Handstand to forward roll']]) > 0
-            else:
-                srs[3] = len([e for e in elems if e[0] in [
-                             'Cartwheel', 'Roundoff', 'Handstand to forward roll']]) > 0
+    relevant_elems = [e for e in elems if e[0] in ['Handstand',
+                                                   'Cartwheel', 'Roundoff', 'Handstand to forward roll']]
+    for e in relevant_elems:
+        if e[0] == 'Handstand':
+            for q in e[1]["info_element_questions"]:
+                if q[0] == "Did the handstand reach vertical (90º)?":
+                    if q[1]["info_element_questions"][1] != "yes":
+                        relevant_elems.remove(e)
+
+    srs[3] = len([e for e in relevant_elems]) > 0
 
     return sum(srs) * 0.5, srs
 
