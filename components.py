@@ -228,10 +228,21 @@ def compute_skill_requirements(all_CB):
     for combo in all_CB:
         elem1 = get_element_by_name(combo[0])
         elem2 = get_element_by_name(combo[1])
-        if elem1['element_type'] == ('dance' or 'jump') and elem2['element_type'] == ('dance' or 'jump'):
-            # The combo consists of
-            if elem1['element_type'] == 'jump'
-
+        if elem1[1]['element_type'] == ('dance' or 'jump') and elem2[1]['element_type'] == ('dance' or 'jump'):
+            # The combo consists of 2 dance elements continue
+            if elem1[0] == ('Split jump' or 'Split leap'):
+                # Check for 180º splits in first element
+                for q in elem1[1]['info_element_questions']:
+                    if q[0] == 'What was the deviation from a 180º splits?' and q[1] == '0º':
+                        srs[0] = True
+                        break
+            if elem2[0] == ('Split jump' or 'Split leap'):
+                # Check for 180º splits in second element
+                for q in elem2[1]['info_element_questions']:
+                    if q[0] == 'What was the deviation from a 180º splits?' and q[1] == '0º':
+                        srs[0] = True
+                        break
+    '''
     for elem in elems:
         # go through all elements
         if elem[1]['info_combo'] != 'none' and elem[1]['element_type'] == ('dance' or 'jump') and elem[1]['valid'] == 1:
@@ -269,7 +280,7 @@ def compute_skill_requirements(all_CB):
                                 if q[0] == 'What was the deviation from a 180º splits?' and q[1] == '0º':
                                     srs[0] = True
                                     break
-
+    '''
     srs[1] = len([e for e in elems if 'Turn' in e[0]]) > 0
     srs[2] = len([e for e in elems if e[1]['element_type'] ==
                   'acro' and e[1]['difficulty'] in ['A', 'B']]) > 0
@@ -468,7 +479,7 @@ def get_element_by_name(name):
 
 
 def results():
-    cols = st.columns(20)
+    cols = st.columns([1.5, 1])
     with cols[0]:
         st.header('Results')
 
