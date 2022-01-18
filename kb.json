@@ -33,19 +33,14 @@
         "Split leap": {
           "element_type": "jump",
           "valid": 0,
+          "difficulty": "A",
           "element_questions": [
             {
               "question": "What was the deviation from a 180º splits?",
               "options": {
-                "0°": {
-                  "difficulty": "A"
-                },
-                "<20°": {
-                  "difficulty": "A"
-                },
-                "20º - 45º": {
-                  "difficulty": "A"
-                },
+                "0°": {},
+                "<20°": {},
+                "20º - 45º": {},
                 ">45º": {
                   "difficulty": "TA"
                 }
@@ -58,19 +53,14 @@
         "Split jump": {
           "element_type": "jump",
           "valid": 0,
+          "difficulty": "B",
           "element_questions": [
             {
               "question": "What was the deviation from a 180º splits?",
               "options": {
-                "0°": {
-                  "difficulty": "B"
-                },
-                "<20°": {
-                  "difficulty": "B"
-                },
-                "20º - 45º": {
-                  "difficulty": "B"
-                },
+                "0°": {},
+                "<20°": {},
+                "20º - 45º": {},
                 ">45º": {
                   "difficulty": "TA"
                 }
@@ -154,15 +144,9 @@
             {
               "question": "What was the deviation from a 180º splits?",
               "options": {
-                "0°": {
-                  "difficulty": "A"
-                },
-                "0-90°": {
-                  "difficulty": "A"
-                },
-                ">90º(under horizontal)": {
-                  "difficulty": "A"
-                }
+                "0°": {},
+                "0-90°": {},
+                ">90º(under horizontal)": {}
               }
             }
           ],
@@ -186,7 +170,10 @@
             },
             {
               "question": "Did the handstand reach vertical (90º)?",
-              "options": ["Yes", "No"]
+              "options": {
+                "Yes": {},
+                "No": {}
+              }
             }
           ],
           "execution_mistakes": [1, 2, 3, 5, 6, 7, 10],
