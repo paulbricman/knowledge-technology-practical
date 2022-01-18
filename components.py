@@ -100,7 +100,6 @@ def detail_element(element):
         st.session_state['selected_elements'][st.session_state['current_element']
                                               ][1]['info_element_questions'] += [[question['question'], option]]
 
-        print(question['options'])
         difficulty = question['options'][option].get('difficulty', difficulty)
 
     st.session_state['selected_elements'][st.session_state['current_element']
@@ -120,7 +119,7 @@ def detail_element(element):
             option = cols[0].radio(mistake[0], ['none'] +
                                    mistake[1], key=element[0])
         else:
-            option = cols[0].checkbox(mistake[0])
+            option = cols[0].checkbox(mistake[0], key=element[0])
             if option:
                 option = mistake[1]
                 if mistake[0] == 'Help from trainer':
@@ -145,7 +144,7 @@ def detail_element(element):
             option = cols[1].radio(mistake[0], ['none'] +
                                    mistake[1], key=element[0])
         else:
-            option = cols[1].checkbox(mistake[0])
+            option = cols[1].checkbox(mistake[0], key=element[0])
             if option:
                 option = mistake[1]
             else:
