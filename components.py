@@ -527,11 +527,11 @@ def results():
         with st.expander('Execution Details'):
             st.markdown('#### General mistakes')
             for e_idx, e in enumerate(gen_mistakes):
-                st.markdown(e + '. ' + str(e_idx + 1))
+                st.markdown(str(e_idx + 1) + '. ' + e)
 
             st.markdown('#### Execution mistakes')
             for e_idx, e in enumerate(ex_mistakes):
-                st.markdown(str(e_idx + 1) + '. ' + e)
+                st.markdown(str(e_idx + 1) + '. ' + e[1])
 
         with st.expander('Artistry Details'):
             for e_idx, e in enumerate(art_mistakes):
@@ -541,7 +541,7 @@ def results():
         st.metric(label="Final score", value=round(e_score + d_score, 2))
         if n_score != 0:
             st.text("Final score after neutral deduction for short exercise applied \n" +
-                    "{}P.".format(e_score + d_score) + " - {}P.(short exercise)".format(n_score) + " = ")
+                    "{}P.".format(round(e_score + d_score, 2)) + " - {}P.(short exercise)".format(n_score) + " = ")
             st.metric(label="Final score", value=round(
                 e_score + d_score - n_score, 2))
 
