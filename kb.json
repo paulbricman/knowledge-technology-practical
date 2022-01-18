@@ -104,8 +104,12 @@
             },
             {
               "question": "Were both legs above horizontal?",
-              "options": ["Yes", "No, one/both legs were on horizontal", "No, one/both legs were under horizontal"]
+              "options": {
+                "Yes": {},
+                "No, one/both legs were on horizontal": {},
+                "No, one/both legs were under horizontal": {}
               }
+            }
           ],
           "execution_mistakes": [5, 6, 7],
           "landing_mistakes": [1, 2, 4, 5, 8]
@@ -183,8 +187,8 @@
             {
               "question": "Did the handstand reach vertical (90º)?",
               "options": ["Yes", "No"]
-              }
-            ],
+            }
+          ],
           "execution_mistakes": [1, 2, 3, 5, 6, 7, 10],
           "landing_mistakes": [1, 2, 4, 5, 8]
         },
