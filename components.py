@@ -3,7 +3,6 @@ import json
 from util import *
 import pandas as pd
 
-
 kb = json.load(open('kb.json', 'r'))
 
 
@@ -61,7 +60,7 @@ def choose_elements():
         'What dismount is the gymnast performing?', dismounts)
 
     st.session_state['selected_elements'] = [selected_mount] + \
-        selected_jumps + selected_dances + selected_acros + [selected_dismount]
+                                            selected_jumps + selected_dances + selected_acros + [selected_dismount]
     st.session_state['selected_elements'] = [
         (e, elements[e]) for e in st.session_state['selected_elements']]
 
@@ -81,11 +80,11 @@ def detail_element(element):
         st.session_state['difficulty'] = 0
 
     st.session_state['selected_elements'][st.session_state['current_element']
-                                          ][1]['valid'] = 1
+    ][1]['valid'] = 1
 
     cols[0].header(element[0])
     st.session_state['selected_elements'][st.session_state['current_element']
-                                          ][1]['info_element_questions'] = []
+    ][1]['info_element_questions'] = []
     difficulty = st.session_state['selected_elements'][st.session_state['current_element']][1].get(
         'difficulty', None)
 
@@ -98,12 +97,12 @@ def detail_element(element):
                                    question['options'].keys(), key=element[0])
 
         st.session_state['selected_elements'][st.session_state['current_element']
-                                              ][1]['info_element_questions'] += [[question['question'], option]]
+        ][1]['info_element_questions'] += [[question['question'], option]]
 
         difficulty = question['options'][option].get('difficulty', difficulty)
 
     st.session_state['selected_elements'][st.session_state['current_element']
-                                          ][1]['difficulty'] = difficulty
+    ][1]['difficulty'] = difficulty
 
     cols[0].subheader('Execution:')
     mistakes = list(kb['general_execution_mistakes'].items())
@@ -112,7 +111,7 @@ def detail_element(element):
         relevant_mistakes += [mistakes[e_idx - 1]]
 
     st.session_state['selected_elements'][st.session_state['current_element']
-                                          ][1]['info_execution_mistakes'] = []
+    ][1]['info_execution_mistakes'] = []
 
     for mistake in relevant_mistakes:
         if len(mistake[1]) > 1:
@@ -128,7 +127,7 @@ def detail_element(element):
                 option = 'none'
 
         st.session_state['selected_elements'][st.session_state['current_element']
-                                              ][1]['info_execution_mistakes'] += [[mistake[0], option]]
+        ][1]['info_execution_mistakes'] += [[mistake[0], option]]
 
     cols[1].subheader('Landing:')
     mistakes = list(kb['general_landing_mistakes'].items())
@@ -137,7 +136,7 @@ def detail_element(element):
         relevant_mistakes += [mistakes[e_idx - 1]]
 
     st.session_state['selected_elements'][st.session_state['current_element']
-                                          ][1]['info_landing_mistakes'] = []
+    ][1]['info_landing_mistakes'] = []
 
     for mistake in relevant_mistakes:
         if len(mistake[1]) > 1:
@@ -150,7 +149,7 @@ def detail_element(element):
             else:
                 option = 'none'
         st.session_state['selected_elements'][st.session_state['current_element']
-                                              ][1]['info_landing_mistakes'] += [[mistake[0], option]]
+        ][1]['info_landing_mistakes'] += [[mistake[0], option]]
 
     # Specific code for falls
     check = cols[1].checkbox("Fall", key=element[0])
@@ -160,22 +159,29 @@ def detail_element(element):
             # -1 and no DS CB and SR
             st.session_state['selected_elements'][st.session_state['current_element']][1]['valid'] = 0
             st.session_state['selected_elements'][st.session_state['current_element']
-                                                  ][1]['info_landing_mistakes'] += [['Fall(not landed)', 'very big']]
+            ][1]['info_landing_mistakes'] += [['Fall(not landed)', 'very big']]
         else:
             st.session_state['selected_elements'][st.session_state['current_element']
-                                                  ][1]['info_landing_mistakes'] += [['Fall', 'very big']]
+            ][1]['info_landing_mistakes'] += [['Fall', 'very big']]
     else:
         st.session_state['selected_elements'][st.session_state['current_element']
-                                              ][1]['info_landing_mistakes'] += [['Fall', 'none']]
+        ][1]['info_landing_mistakes'] += [['Fall', 'none']]
 
     cols[0].subheader('Combination:')
     combo_option = cols[0].selectbox('Was this element combined with another one?', [
         'none'] + [e[0] for e in st.session_state['selected_elements']], key=element[0])
     st.session_state['selected_elements'][st.session_state['current_element']
-                                          ][1]['info_combo'] = combo_option
+    ][1]['info_combo'] = combo_option
 
     if st.button('Next'):
         st.session_state['current_element'] += 1
+        st.experimental_rerun()
+
+    if st.button('Back'):
+        if st.session_state['current_element'] == st.session_state['selected_elements'][0]:
+            st.session_state['state'] = 'choose_elements'
+        else:
+            st.session_state['current_element'] -= 1
         st.experimental_rerun()
 
 
@@ -202,6 +208,10 @@ def general_mistakes():
         st.session_state['state'] = 'artistry'
         st.experimental_rerun()
 
+    if st.button('Back'):
+        st.session_state['current_element'] -= 1
+        st.experimental_rerun()
+
 
 def artistry():
     if 'artistry' not in st.session_state.keys():
@@ -219,29 +229,52 @@ def artistry():
         st.session_state['state'] = 'results'
         st.experimental_rerun()
 
+    if st.button('Back'):
+        st.session_state['state'] = 'element-walkthrough'
+        st.experimental_rerun()
+
 
 def compute_skill_requirements(all_CB):
     elems = st.session_state['selected_elements']
-    srs = [None] * 4
+    srs = [['Combination of at least 2 different dance elements, where one jump has a splits of at least 180º', None],
+           ['A turn from group 3', None], ['An acrobatic element with a difficulty value of at least A', None],
+           ['Acrobatic element up to or through handstand', None]]
 
-    srs[0] = False
+    srs[0][1] = False
     for combo in all_CB:
-        elem1 = get_element_by_name(combo[0])
-        elem2 = get_element_by_name(combo[1])
-        if elem1[1]['element_type'] == ('dance' or 'jump') and elem2[1]['element_type'] == ('dance' or 'jump'):
-            # The combo consists of 2 dance elements continue
-            if elem1[0] == ('Split jump' or 'Split leap'):
-                # Check for 180º splits in first element
-                for q in elem1[1]['info_element_questions']:
-                    if q[0] == 'What was the deviation from a 180º splits?' and q[1] == '0º':
-                        srs[0] = True
-                        break
-            if elem2[0] == ('Split jump' or 'Split leap'):
-                # Check for 180º splits in second element
-                for q in elem2[1]['info_element_questions']:
-                    if q[0] == 'What was the deviation from a 180º splits?' and q[1] == '0º':
-                        srs[0] = True
-                        break
+        [elem1] = get_element_by_name(combo[0])
+        [elem2] = get_element_by_name(combo[1])
+        print('elem 1 element type: '+ elem1[1]['element_type'])
+        print('elem 2 element type: '+ elem2[1]['element_type'])
+        if elem1[1]['element_type'] == 'dance' or 'jump':
+            print('First if passed')
+            if elem2[1]['element_type'] == 'dance' or 'jump':
+                print('Second if passed')
+                # The combo consists of 2 dance elements continue
+                print("elem1: "+ elem1[0])
+                print("elem2: "+ elem2[0])
+                # SOMETHING IS GOING WRONG WITH THESE IF STATEMENTS: Cat leap passes
+                if elem1[0] == 'Split jump' or 'Split leap':
+                    print('elem1 is a jump')
+                    # Check for 180º splits in first element
+                    for q in elem1[1]['info_element_questions']:
+                        if q[0] == 'What was the deviation from a 180º splits?':
+                            if q[1] == '0°':
+                                print('elem1 has split')
+                                srs[0][1] = True
+                                break
+                #SAME FOR THIS IF
+                if elem2[0] == 'Split jump' or 'Split leap':
+                    print('elem2 is a jump:'+ elem2[0])
+                    # Check for 180º splits in second element
+                    for q in elem2[1]['info_element_questions']:
+                        if q[0] == 'What was the deviation from a 180º splits?':
+                            if q[1] == '0º':
+                                print('elem2 has split')
+                                srs[0][1] = True
+                                break
+                if srs[0][1]:
+                    break
     '''
     for elem in elems:
         # go through all elements
@@ -281,9 +314,9 @@ def compute_skill_requirements(all_CB):
                                     srs[0] = True
                                     break
     '''
-    srs[1] = len([e for e in elems if 'Turn' in e[0]]) > 0
-    srs[2] = len([e for e in elems if e[1]['element_type'] ==
-                  'acro' and e[1]['difficulty'] in ['A', 'B']]) > 0
+    srs[1][1] = len([e for e in elems if 'Turn' in e[0]]) > 0
+    srs[2][1] = len([e for e in elems if e[1]['element_type'] ==
+                     'acro' and e[1]['difficulty'] in ['A', 'B']]) > 0
 
     relevant_elems = [e for e in elems if e[0] in ['Handstand',
                                                    'Cartwheel', 'Roundoff', 'Handstand to forward roll']]
@@ -294,9 +327,14 @@ def compute_skill_requirements(all_CB):
                     if q[1] != "Yes":
                         relevant_elems.remove(e)
 
-    srs[3] = len([e for e in relevant_elems]) > 0
+    srs[3][1] = len([e for e in relevant_elems]) > 0
 
-    return round(sum(srs) * 0.5, 2), srs
+    sr_sum = 0
+    for sr in srs:
+        if sr[1]:
+            sr_sum += 0.5
+
+    return round(sr_sum, 2), srs
 
 
 def compute_combo_bonus():
@@ -318,7 +356,8 @@ def compute_combo_bonus():
             if flag == 0:
                 # 1st element counts towards combo, now find 2nd element
                 comboed_elem = [
-                    e for e in st.session_state['selected_elements'] if e[0] == elem[1]['info_combo'] and e[1]['valid'] == 1][0]
+                    e for e in st.session_state['selected_elements'] if
+                    e[0] == elem[1]['info_combo'] and e[1]['valid'] == 1][0]
 
                 # Check whether this combo was not already calculated or is a combination with itself
                 for comb in all_cbs:
@@ -347,7 +386,7 @@ def compute_combo_bonus():
                             cb += 0.1
                             counting_cbs += [[[elem[0],
                                                comboed_elem[0]], ['A', 'A']]]
-
+    print(counting_cbs)
     return round(cb, 2), counting_cbs, all_cbs
 
 
@@ -488,46 +527,45 @@ def results():
         CB_score, counting_CB, all_CB = compute_combo_bonus()
         SR_score, SR = compute_skill_requirements(all_CB)
 
-        d_score = round(diff+SR_score+CB_score, 2)
+        d_score = round(diff + SR_score + CB_score, 2)
 
-        st.text("Difficulty ({}".format(counter[0]) + "TA + {}".format(counter[1]) + "A + {}".format(counter[2]) + "B)                                                                                +{}P. \n".format(diff) +
-                "Composition Requirements                                                                                  +{}P. \n".format(SR_score) +
-                "Connection Value                                                                                          +{}P. \n".format(CB_score))
-        st.markdown('---')
-        st.text("D-score                                                                                                   ={}P.".format(d_score))
+        st.text("Difficulty ({}".format(counter[0]) + "TA + {}".format(counter[1]) + "A + {}".format(
+            counter[2]) + "B)                                               +{}P. \n".format(diff) +
+                "Composition Requirements                                                 +{}P. \n".format(SR_score) +
+                "Connection Value                                                         +{}P. \n".format(CB_score) +
+                "-------------------------------------------------------------------------------- \n")
+        st.text("D-score                                                                  ={}P.".format(d_score))
 
         with st.expander('Difficulty Details'):
             # [[elem name 1, A], [elem name 2, TA]]
             for e in sorted(d_elems, key=lambda x: {'TA': 0, 'A': 1, 'B': 2}[x[1]]):
-                st.markdown('- ' + e[0] + ' **' + e[1] + '**')
+                st.markdown('- **' + e[1] + '**  - ' + e[0])
 
         with st.expander('Requirements Details'):
             for e_idx, e in enumerate(SR):
-                st.markdown('- Requirement ' + str(e_idx + 1) +
-                            ': **' + str(e) + '**')
+                st.markdown('- ' + str(e[0]) + '    -    **' + str(e[1]) + '**')
 
         with st.expander('Connection Details'):
-            for e_idx, e in enumerate(counting_CB):
-                st.markdown(str(e_idx + 1) + '.' +
-                            ': **' + e[0] + ' + ' + e[1] + '**')
+            for e in counting_CB:
+                st.markdown(str(e_idx + 1) + '. **' + e[1][0] + ' + ' + e[1][1] + '**  -  '+ e[0][0] + ' + ' + e[0][1])
 
         st.subheader(
             'E-Score')
         art_score, art_mistakes = compute_artistry()
         ex_score, gen_mistakes, ex_mistakes = compute_execution()
         n_score = compute_n_score()
-        e_score = round(10.00+ex_score+art_score, 2)
+        e_score = round(10.00 + ex_score + art_score, 2)
 
-        st.text("E-score                                                                                                   10.0P.\n" +
-                "Execution                                                           {}P.".format(ex_score) + "                    \n" +
-                "Artistry                                                            {}P.".format(art_score) + "                                {}P.\n".format(ex_score+art_score))
-        st.markdown('---')
-        st.text("E-score                                                                                                   ={}P.".format(e_score))
+        st.text("Starting E-score                                                         10.0P.")
+        st.text("Execution                                   {}P.".format(ex_score) + "                    \n" +
+            "Artistry                                    {}P.".format(art_score) + "                       {}P.\n".format(round(ex_score + art_score, 2)) +
+            "-------------------------------------------------------------------------------- \n")
+        st.text("E-score                                                                  ={}P.".format(e_score))
 
         with st.expander('Execution Details'):
             st.markdown('#### General mistakes')
             for e_idx, e in enumerate(gen_mistakes):
-                st.markdown(str(e_idx + 1) + '. ' + e)
+                st.markdown(e + '. ' + str(e_idx + 1))
 
             st.markdown('#### Execution mistakes')
             for e_idx, e in enumerate(ex_mistakes):
@@ -537,7 +575,13 @@ def results():
             for e_idx, e in enumerate(art_mistakes):
                 st.markdown(str(e_idx + 1) + '. ' + e)
 
-        st.metric(label="Final score", value=e_score+d_score)
+    with cols[1]:
+        st.metric(label="Final score", value=e_score + d_score)
         if n_score != 0:
             st.text("Final score after neutral deduction for short exercise applied \n" +
-                    "{}P.".format(e_score+d_score) + " - {}P.(short exercise)".format(n_score) + " = {}P.".format(round(e_score + d_score - n_score, 2)))
+                    "{}P.".format(e_score + d_score) + " - {}P.(short exercise)".format(n_score) + " = ")
+            st.metric(label="Final score", value=round(e_score + d_score - n_score, 2))
+
+        if st.button('Back'):
+            st.session_state['state'] = 'artistry'
+            st.experimental_rerun()
