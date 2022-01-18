@@ -86,7 +86,8 @@ def detail_element(element):
     cols[0].header(element[0])
     st.session_state['selected_elements'][st.session_state['current_element']
                                           ][1]['info_element_questions'] = []
-    difficulty = st.session_state['selected_elements'][st.session_state['current_element']][1].get('difficulty', None)
+    difficulty = st.session_state['selected_elements'][st.session_state['current_element']][1].get(
+        'difficulty', None)
 
     for question in element[1].get('element_questions', []):
         if isinstance(question['options'], list):
@@ -94,14 +95,15 @@ def detail_element(element):
                                    question['options'], key=element[0])
         else:
             option = cols[0].radio(question['question'],
-                                question['options'].keys(), key=element[0])
+                                   question['options'].keys(), key=element[0])
 
         st.session_state['selected_elements'][st.session_state['current_element']
                                               ][1]['info_element_questions'] += [[question['question'], option]]
 
         difficulty = question['options'][option].get('difficulty', difficulty)
 
-    st.session_state['selected_elements'][st.session_state['current_element']][1]['difficulty'] = difficulty
+    st.session_state['selected_elements'][st.session_state['current_element']
+                                          ][1]['difficulty'] = difficulty
 
     cols[0].subheader('Execution:')
     mistakes = list(kb['general_execution_mistakes'].items())
@@ -117,7 +119,7 @@ def detail_element(element):
             option = cols[0].radio(mistake[0], ['none'] +
                                    mistake[1], key=element[0])
         else:
-            option = cols[0].checkbox(mistake[0])
+            option = cols[0].checkbox(mistake[0], key=element[0])
             if option:
                 option = mistake[1]
                 if mistake[0] == 'Help from trainer':
@@ -142,7 +144,7 @@ def detail_element(element):
             option = cols[1].radio(mistake[0], ['none'] +
                                    mistake[1], key=element[0])
         else:
-            option = cols[1].checkbox(mistake[0])
+            option = cols[1].checkbox(mistake[0], key=element[0])
             if option:
                 option = mistake[1]
             else:
@@ -175,6 +177,7 @@ def detail_element(element):
     if st.button('Next'):
         st.session_state['current_element'] += 1
         st.experimental_rerun()
+
 
 def general_mistakes():
     st.subheader('General mistakes')
@@ -272,7 +275,8 @@ def compute_skill_requirements():
                 srs[3] = len([e for e in elems if e[0] in ['Handstand',
                                                            'Cartwheel', 'Roundoff', 'Handstand to forward roll']]) > 0
             else:
-                srs[3] = len([e for e in elems if e[0] in ['Cartwheel', 'Roundoff', 'Handstand to forward roll']]) > 0
+                srs[3] = len([e for e in elems if e[0] in [
+                             'Cartwheel', 'Roundoff', 'Handstand to forward roll']]) > 0
 
     return sum(srs) * 0.5, srs
 
