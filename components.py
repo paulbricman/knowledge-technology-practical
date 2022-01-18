@@ -173,14 +173,19 @@ def detail_element(element):
     st.session_state['selected_elements'][st.session_state['current_element']
     ][1]['info_combo'] = combo_option
 
-    if st.button('Next'):
+    btn1, btn2, btn3, btn4, btn5, btn6, btn7, btn8 = st.columns(8)
+
+    if btn5.button('Next'):
         st.session_state['current_element'] += 1
         st.experimental_rerun()
 
-    if st.button('Back'):
+    if btn4.button('Back'):
         if st.session_state['current_element'] == st.session_state['selected_elements'][0]:
+            # in the case where we are in the screen of the first element, return to choose elements page
+            print("correct back")
             st.session_state['state'] = 'choose_elements'
         else:
+            print("mistake here") # THIS IF STATEMENT DOES NOT WORK PROPERLY
             st.session_state['current_element'] -= 1
         st.experimental_rerun()
 
@@ -191,12 +196,6 @@ def general_mistakes():
     st.session_state['general_mistakes'] = []
 
     for mistake in mistakes.items():
-        # option = st.radio(mistake[0], ['none'] + mistake[1])
-        # st.session_state['general_mistakes'] += [[mistake[0], option]]
-
-        # @paul can you check whether here the correct value is deducted?
-        # As in: if the duration is longer than 1:20 it should deduct small and help from trainer
-        # is -1 + no DS/CB/SR etc
         option = st.checkbox(mistake[0])
         if option:
             option = mistake[1]
@@ -204,11 +203,13 @@ def general_mistakes():
             option = 'none'
         st.session_state['general_mistakes'] += [[mistake[0], option]]
 
-    if st.button('Next'):
+    btn1, btn2, btn3, btn4, btn5, btn6, btn7, btn8 = st.columns(8)
+
+    if btn5.button('Next'):
         st.session_state['state'] = 'artistry'
         st.experimental_rerun()
 
-    if st.button('Back'):
+    if btn4.button('Back'):
         st.session_state['current_element'] -= 1
         st.experimental_rerun()
 
@@ -225,11 +226,13 @@ def artistry():
         option = st.checkbox(mistake)
         st.session_state['artistry_mistakes'] += [[mistake, option]]
 
-    if st.button('Next'):
+    btn1, btn2, btn3, btn4, btn5, btn6, btn7, btn8 = st.columns(8)
+    if btn5.button('Next'):
         st.session_state['state'] = 'results'
         st.experimental_rerun()
 
-    if st.button('Back'):
+    if btn4.button('Back'):
+        # THIS ONE ALSO DOESNT WORK YET
         st.session_state['state'] = 'element-walkthrough'
         st.experimental_rerun()
 
@@ -244,76 +247,26 @@ def compute_skill_requirements(all_CB):
     for combo in all_CB:
         [elem1] = get_element_by_name(combo[0])
         [elem2] = get_element_by_name(combo[1])
-        print('elem 1 element type: '+ elem1[1]['element_type'])
-        print('elem 2 element type: '+ elem2[1]['element_type'])
-        if elem1[1]['element_type'] == 'dance' or 'jump':
-            print('First if passed')
-            if elem2[1]['element_type'] == 'dance' or 'jump':
-                print('Second if passed')
+        if elem1[1]['element_type'] == 'dance' or elem1[1]['element_type'] == 'jump':
+            if elem2[1]['element_type'] == 'dance' or elem2[1]['element_type'] == 'jump':
                 # The combo consists of 2 dance elements continue
-                print("elem1: "+ elem1[0])
-                print("elem2: "+ elem2[0])
-                # SOMETHING IS GOING WRONG WITH THESE IF STATEMENTS: Cat leap passes
-                if elem1[0] == 'Split jump' or 'Split leap':
-                    print('elem1 is a jump')
+                if elem1[0] == 'Split jump' or elem1[0] == 'Split leap':
                     # Check for 180º splits in first element
                     for q in elem1[1]['info_element_questions']:
                         if q[0] == 'What was the deviation from a 180º splits?':
                             if q[1] == '0°':
-                                print('elem1 has split')
                                 srs[0][1] = True
                                 break
-                #SAME FOR THIS IF
-                if elem2[0] == 'Split jump' or 'Split leap':
-                    print('elem2 is a jump:'+ elem2[0])
+                if elem2[0] == 'Split jump' or elem2[0] == 'Split leap':
                     # Check for 180º splits in second element
                     for q in elem2[1]['info_element_questions']:
                         if q[0] == 'What was the deviation from a 180º splits?':
                             if q[1] == '0º':
-                                print('elem2 has split')
                                 srs[0][1] = True
                                 break
                 if srs[0][1]:
                     break
-    '''
-    for elem in elems:
-        # go through all elements
-        if elem[1]['info_combo'] != 'none' and elem[1]['element_type'] == ('dance' or 'jump') and elem[1]['valid'] == 1:
-            # if element is a turn or a jump check if a combination is done
-            # Combo found
-            flag = 0
-            for l in elem[1]['info_landing_mistakes']:
-                # check whether this first element of the combination had a
-                # landing mistake(the combo doesn't count then)
-                if l[1] != 'none':
-                    # there is a landing mistake so combo doesnt count
-                    flag = 1
-            if flag == 0:
-                # 1st element counts towards combo, now find 2nd element
-                comboed_elem = [
-                    e for e in elems if e[0] == elem[1]['info_combo'] and e[1]['valid'] == 1][0]
-                if comboed_elem[1]['element_type'] == ('dance' or 'jump'):
-                    # 2nd element follows dance requirement
-                    flag1 = 0
-                    for l in comboed_elem[1]['info_landing_mistakes']:
-                        # check whether this second element of the combination had a
-                        # landing mistake(the combo doesn't count then)
-                        if l[1] == 'very big':
-                            # there was a fall so combo doesnt count
-                            flag1 = 1
-                    if flag1 == 0:
-                        # 2nd element counts towards combo now check whether there was a jump at 180
-                        if elem[1]['element_type'] == ('Split jump' or 'Split leap'):
-                            for q in elem[1]['info_element_questions']:
-                                if q[0] == 'What was the deviation from a 180º splits?' and q[1] == '0º':
-                                    srs[0] = True
-                                    break
-                        if comboed_elem[1]['element_type'] == ('Split jump' or 'Split leap'):
-                            for q in elem[1]['info_element_questions']:
-                                if q[0] == 'What was the deviation from a 180º splits?' and q[1] == '0º':
-                                    srs[0] = True
-                                    break
-    '''
+
     srs[1][1] = len([e for e in elems if 'Turn' in e[0]]) > 0
     srs[2][1] = len([e for e in elems if e[1]['element_type'] ==
                      'acro' and e[1]['difficulty'] in ['A', 'B']]) > 0
@@ -382,11 +335,15 @@ def compute_combo_bonus():
                             cb += 0.2
                             counting_cbs += [[[elem[0],
                                                comboed_elem[0]], ['A', 'B']]]
+                        elif sorted_combo_elems == ['B', 'B']:
+                            cb += 0.2
+                            counting_cbs += [[[elem[0],
+                                               comboed_elem[0]], ['B', 'B']]]
                         elif sorted_combo_elems == ['A', 'A']:
                             cb += 0.1
                             counting_cbs += [[[elem[0],
                                                comboed_elem[0]], ['A', 'A']]]
-    print(counting_cbs)
+
     return round(cb, 2), counting_cbs, all_cbs
 
 
@@ -576,7 +533,7 @@ def results():
                 st.markdown(str(e_idx + 1) + '. ' + e)
 
     with cols[1]:
-        st.metric(label="Final score", value=e_score + d_score)
+        st.metric(label="Final score", value=round(e_score + d_score, 2))
         if n_score != 0:
             st.text("Final score after neutral deduction for short exercise applied \n" +
                     "{}P.".format(e_score + d_score) + " - {}P.(short exercise)".format(n_score) + " = ")
