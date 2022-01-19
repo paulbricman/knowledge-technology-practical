@@ -576,7 +576,6 @@ def results():
 
         #ADD RESTART BUTTON WITH TEXT "Next Routine"
 
-#with cols[1]:
     st.sidebar.title('Final Score')
 
     st.sidebar.metric("D-score", value= str(d_score)+" P.")
@@ -584,12 +583,7 @@ def results():
     st.sidebar.markdown("---")
     st.sidebar.metric(label="Final score", value=str(final_score)+" P.")
 
-    #with cols[2]:
-
     if n_score != 0:
-        #st.text("Final score after neutral deduction for short exercise:\n" +
-        #        "{}P.".format(round(e_score + d_score, 2)) + " - {}P.(short exercise)".format(n_score) + " = ")
-
         st.sidebar.warning('Neutral deduction of -'+str(n_score)+' for too short routine.\n Scroll for new final score.')
         st.sidebar.metric(label="Final score", value=str(new_final_score)+" P.")
 

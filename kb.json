@@ -269,9 +269,9 @@
     "Routine presented as isolated elements (no flow)",
     "Not enough use of the entire beam length",
     "No sidewards choreography (needs to have at least 3 sideway steps)",
-    "No choreography/elements close to the beam(upperbody, thigh, head)",
+    "No choreography or elements close to the beam (upperbody, thighs or head touching the beam)",
     "Lack of complexity and creativity in movements of choreography",
-    ">1x ½ turn on 2 feet during the entire routine"
+    "More than 1x ½ turn on 2 feet during the entire routine"
   ],
   "general_execution_mistakes": {
     "Bent arms or knees": ["small", "middle", "big"],
@@ -292,17 +292,17 @@
   "general_landing_mistakes": {
     "Lack of balance": ["small", "middle"],
     "Bad body form": ["small", "middle"],
-    "Separated legs (only applicable to dismount) ": ["small"],
-    "Extra swing of arms": ["small"],
-    "Extra steps/small hop": ["small"],
+    "Separated legs at landing": ["small"],
+    "Extra arm swing": ["small"],
+    "Small steps/small hop": ["small"],
     "Big step": ["middle"],
     "Deep squat": ["middle"],
     "Support of 1 or 2 arms on beam/mat": ["very big"]
   },
   "general_mistakes": {
-    "Was the duration of the routine longer than 1:20 min?": ["small"],
+    "Duration of the routine was longer than 1:20 min": ["small"],
     "No presentation to judge at start and/or end of routine": ["middle"],
-    "Jewelry, visible underwear, not skin colored tape": ["middle"],
-    "Begin routine before starting sign of jury": ["zero"]
+    "Jewelry, underwear or not skin colored tape visible": ["middle"],
+    "Routine started before sign of jury": ["zero"]
   }
 }
