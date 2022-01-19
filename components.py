@@ -120,7 +120,7 @@ def detail_element(element):
         else:
             option = cols[0].checkbox(mistake[0], key=element[0])
             if option:
-                option = mistake[1]
+                [option] = mistake[1]
                 if mistake[0] == 'Help from trainer':
                     st.session_state['selected_elements'][st.session_state['current_element']][1]['valid'] = 0
             else:
@@ -145,7 +145,7 @@ def detail_element(element):
         else:
             option = cols[1].checkbox(mistake[0], key=element[0])
             if option:
-                option = mistake[1]
+                [option] = mistake[1]
             else:
                 option = 'none'
         st.session_state['selected_elements'][st.session_state['current_element']
@@ -159,7 +159,7 @@ def detail_element(element):
             # -1 and no DS CB and SR
             st.session_state['selected_elements'][st.session_state['current_element']][1]['valid'] = 0
             st.session_state['selected_elements'][st.session_state['current_element']
-                                                  ][1]['info_landing_mistakes'] += [['Fall(not landed)', 'very big']]
+                                                  ][1]['info_landing_mistakes'] += [['Fall (not landed)', 'very big']]
         else:
             st.session_state['selected_elements'][st.session_state['current_element']
                                                   ][1]['info_landing_mistakes'] += [['Fall', 'very big']]
@@ -399,62 +399,75 @@ def compute_execution():
 
     for mistake in general_mistakes:
         if mistake[1] == 'small':
+            element_mistakes += [['General mistakes', mistake[0]+" (small) ", -0.1]]
             execution -= 0.1
         elif mistake[1] == 'middle':
+            element_mistakes += [['General mistakes', mistake[0]+" (middle) ", -0.3]]
             execution -= 0.3
         elif mistake[1] == 'zero':
+            element_mistakes += [['General mistakes', mistake[0], 'Entire routine is worth 0']]
             execution = 10  # positive number should not be accessible normally, this routine is not valid
 
     if execution <= 0:
         for elem in st.session_state['selected_elements']:
+            print(str(elem))
+            print(str(elem[0]))
             for answer in elem[1]['info_element_questions']:
                 if answer[0] == "What was the deviation from a 180º splits?":
-                    if answer[1] == "0-90°" or "<20°":
+                    if answer[1] == "0-90°" or answer[1] == "<20°":
+                        element_mistakes += [[elem[0], answer[1]+" deviation from a 180º splits ", -0.1]]
                         execution -= 0.1
-                    elif answer[1] == ">90º(under horizontal)" or "20º - 45º":
+                    elif answer[1] == ">90º(under horizontal)" or answer[1] == "20º - 45º":
+                        element_mistakes += [[elem[0], answer[1]+" deviation from a 180º splits ", -0.3]]
                         execution -= 0.3
                 if answer[0] == "Were both legs above horizontal?":
                     if answer[1] == "No, one/both legs were under horizontal":
+                        element_mistakes += [[elem[0], "one/both legs were under horizontal ", -0.3]]
                         execution -= 0.3
                     elif answer[1] == "No, one/both legs were on horizontal":
+                        element_mistakes += [[elem[0], "one/both legs were on horizontal ", -0.1]]
                         execution -= 0.1
 
             for mistake in elem[1]['info_execution_mistakes']:
                 if mistake[1] != 'none':
-                    element_mistakes += [[elem[0], mistake[0], mistake[1]]]
-
-                if mistake[1] == 'small':
-                    execution -= 0.1
-                elif mistake[1] == 'middle':
-                    execution -= 0.3
-                elif mistake[1] == 'big':
-                    execution -= 0.5
-                elif mistake[1] == 'very big':
-                    execution -= 1.0
+                    if mistake[1] == 'small':
+                        element_mistakes += [[elem[0], mistake[0]+" (small) ", -0.1]]
+                        execution -= 0.1
+                    elif mistake[1] == 'middle':
+                        element_mistakes += [[elem[0], mistake[0]+" (middle) ", -0.3]]
+                        execution -= 0.3
+                    elif mistake[1] == 'big':
+                        element_mistakes += [[elem[0], mistake[0]+" (big) ", -0.5]]
+                        execution -= 0.5
+                    elif mistake[1] == 'very big':
+                        element_mistakes += [[elem[0], mistake[0], -1]]
+                        execution -= 1.0
 
             landing_ex = 0
             fall = 0
             for mistake in elem[1]['info_landing_mistakes']:
                 if mistake[1] != 'none':
-                    element_mistakes += [[elem[0], mistake[0], mistake[1]]]
-
-                if mistake[1] == 'small':
-                    landing_ex += 0.1
-                elif mistake[1] == 'middle':
-                    landing_ex += 0.3
-                elif mistake[1] == 'big':
-                    landing_ex += 0.5
-                elif mistake[1] == 'very big':
-                    landing_ex = 1.0
-                    fall = 1
+                    if mistake[1] == 'small':
+                        element_mistakes += [[elem[0], mistake[0]+" (small) ", -0.1]]
+                        landing_ex += 0.1
+                    elif mistake[1] == 'middle':
+                        element_mistakes += [[elem[0], mistake[0]+" (middle) ", -0.3]]
+                        landing_ex += 0.3
+                    elif mistake[1] == 'big':
+                        element_mistakes += [[elem[0], mistake[0]+" (big) ", -0.5]]
+                        landing_ex += 0.5
+                    elif mistake[1] == 'very big':
+                        element_mistakes += [[elem[0], mistake[0], -1]]
+                        landing_ex = 1.0
+                        fall = 1
             # capped deduction at 0.8 if there was no fall
             if fall == 0 and landing_ex > 0.8:
+                element_mistakes += [[elem[0], "No fall so landing deductions capped at: ", -0.8]]
                 execution -= 0.8
             else:
                 execution -= landing_ex
 
-    return round(execution, 2), [e[0] for e in general_mistakes if e[1] != 'none'], element_mistakes
-
+    return round(execution, 2), element_mistakes
 
 def compute_n_score():
     elem_count = len(st.session_state['selected_elements'])
@@ -475,8 +488,8 @@ def get_element_by_name(name):
 
 
 def results():
-    cols = st.columns([1.5, 1])
-    with cols[0]:
+    cols = st.columns([0.5, 2.5, 0.5])
+    with cols[1]:
         st.header('Results')
 
         st.subheader('D-Score')
@@ -487,15 +500,14 @@ def results():
         d_score = round(diff + SR_score + CB_score, 2)
 
         st.text("Difficulty ({}".format(counter[0]) + "TA + {}".format(counter[1]) + "A + {}".format(
-            counter[2]) + "B)                                               +{}P. \n".format(diff) +
-            "Composition Requirements                                                 +{}P. \n".format(SR_score) +
-            "Connection Value                                                         +{}P. \n".format(CB_score) +
-            "-------------------------------------------------------------------------------- \n")
+            counter[2]) + "B)                                       +{}P. \n".format(diff) +
+            "Composition Requirements                                         +{}P. \n".format(SR_score) +
+            "Connection Value                                                 +{}P. \n".format(CB_score) +
+            "----------------------------------------------------------------------- \n")
         st.text(
-            "D-score                                                                  ={}P.".format(d_score))
+            "D-score                                                          ={}P.".format(d_score))
 
         with st.expander('Difficulty Details'):
-            # [[elem name 1, A], [elem name 2, TA]]
             for e in sorted(d_elems, key=lambda x: {'TA': 0, 'A': 1, 'B': 2}[x[1]]):
                 st.markdown('- **' + e[1] + '**  - ' + e[0])
 
@@ -506,45 +518,79 @@ def results():
 
         with st.expander('Connection Details'):
             for e in counting_CB:
-                st.markdown(str(e_idx + 1) + '. **' +
+                st.markdown('- **' +
                             e[1][0] + ' + ' + e[1][1] + '**  -  ' + e[0][0] + ' + ' + e[0][1])
 
-        st.subheader(
-            'E-Score')
+        st.markdown("---")
+
+        st.subheader('E-Score')
         art_score, art_mistakes = compute_artistry()
-        ex_score, gen_mistakes, ex_mistakes = compute_execution()
+        ex_score, ex_mistakes = compute_execution()
         n_score = compute_n_score()
         e_score = round(10.00 + ex_score + art_score, 2)
+        final_score = round(e_score + d_score, 2)
+
+        if e_score < 0:
+            e_score = 0
 
         st.text(
-            "Starting E-score                                                         10.0P.")
-        st.text("Execution                                   {}P.".format(ex_score) + "                    \n" +
-                "Artistry                                    {}P.".format(art_score) + "                       {}P.\n".format(round(ex_score + art_score, 2)) +
-                "-------------------------------------------------------------------------------- \n")
+            "Starting E-score                                                  10.0P.")
+        st.text("Execution                                   {}P.".format(ex_score) + "             \n" +
+                "Artistry                                    {}P.".format(art_score) + "                {}P.\n".format(round(ex_score + art_score, 2)) +
+                "------------------------------------------------------------------------\n")
         st.text(
-            "E-score                                                                  ={}P.".format(e_score))
+            "E-score                                                           ={}P.".format(e_score))
 
         with st.expander('Execution Details'):
-            st.markdown('#### General mistakes')
-            for e_idx, e in enumerate(gen_mistakes):
-                st.markdown(str(e_idx + 1) + '. ' + e)
-
-            st.markdown('#### Execution mistakes')
+            element = None
             for e_idx, e in enumerate(ex_mistakes):
-                st.markdown(str(e_idx + 1) + '. ' + e[1])
+                print('e0: ' + str(e[0]))
+                if e[0] != element:
+                    element = ex_mistakes[e_idx][0]
+                    st.markdown('##### '+ element)
+                st.markdown('- '+ str(e[1]) + '  :   ' + str(e[2]))
+                st.text('\n')
 
         with st.expander('Artistry Details'):
-            for e_idx, e in enumerate(art_mistakes):
-                st.markdown(str(e_idx + 1) + '. ' + e)
+            for e in art_mistakes:
+                st.markdown('- ' + e + '  :  -0.1')
 
-    with cols[1]:
-        st.metric(label="Final score", value=round(e_score + d_score, 2))
+        st.markdown("---")
+        st.subheader("Final score")
+
+        st.text("D-score                                                          +{}P. \n".format(d_score) +
+                "E-score                                                          +{}P. \n".format(e_score) +
+                "------------------------------------------------------------------------\n")
+        st.text("Final score                                                      ={}P.".format(final_score))
         if n_score != 0:
-            st.text("Final score after neutral deduction for short exercise applied \n" +
-                    "{}P.".format(round(e_score + d_score, 2)) + " - {}P.(short exercise)".format(n_score) + " = ")
-            st.metric(label="Final score", value=round(
-                e_score + d_score - n_score, 2))
+            new_final_score = round(e_score + d_score - n_score, 2)
+            if new_final_score < 0:
+                new_final_score = 0
+            st.warning('Neutral deduction of -'+str(n_score)+' for too short routine')
+            st.text("New final score                                                  ={}P.".format(new_final_score))
 
+        st.title(" ")
         if st.button('Back'):
             st.session_state['state'] = 'artistry'
             st.experimental_rerun()
+
+        #ADD RESTART BUTTON WITH TEXT "Next Routine"
+
+#with cols[1]:
+    st.sidebar.title('Final Score')
+
+    st.sidebar.metric("D-score", value= str(d_score)+" P.")
+    st.sidebar.metric("E-score", value= str(e_score)+" P.")
+    st.sidebar.markdown("---")
+    st.sidebar.metric(label="Final score", value=str(final_score)+" P.")
+
+    #with cols[2]:
+
+    if n_score != 0:
+        #st.text("Final score after neutral deduction for short exercise:\n" +
+        #        "{}P.".format(round(e_score + d_score, 2)) + " - {}P.(short exercise)".format(n_score) + " = ")
+
+        st.sidebar.warning('Neutral deduction of -'+str(n_score)+' for too short routine.\n Scroll for new final score.')
+        st.sidebar.metric(label="Final score", value=str(new_final_score)+" P.")
+
+

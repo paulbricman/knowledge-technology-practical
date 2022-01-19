@@ -292,7 +292,7 @@
   "general_landing_mistakes": {
     "Lack of balance": ["small", "middle"],
     "Bad body form": ["small", "middle"],
-    "Separated legs (only applicable to dismount on beam) ": ["small"],
+    "Separated legs (only applicable to dismount) ": ["small"],
     "Extra swing of arms": ["small"],
     "Extra steps/small hop": ["small"],
     "Big step": ["middle"],
