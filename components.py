@@ -195,7 +195,7 @@ def general_mistakes():
     for mistake in mistakes.items():
         option = st.checkbox(mistake[0])
         if option:
-            option = mistake[1]
+            [option] = mistake[1]
         else:
             option = 'none'
         st.session_state['general_mistakes'] += [[mistake[0], option]]
@@ -395,6 +395,7 @@ def compute_execution():
     element_mistakes = []
     execution = 0
 
+    print(str(general_mistakes))
     for mistake in general_mistakes:
         if mistake[1] == 'small':
             element_mistakes += [['General mistakes',
@@ -407,7 +408,7 @@ def compute_execution():
         elif mistake[1] == 'zero':
             element_mistakes += [['General mistakes',
                                   mistake[0], 'Entire routine is worth 0']]
-            execution = 10  # positive number should not be accessible normally, this routine is not valid
+            #execution = 10  # positive number should not be accessible normally, this routine is not valid
 
     if execution <= 0:
         for elem in st.session_state['selected_elements']:
@@ -503,84 +504,88 @@ def results():
     with cols[1]:
         st.header('Results')
 
-        st.subheader('D-Score')
         diff, d_elems, counter = compute_difficulty_score()
         CB_score, counting_CB, all_CB = compute_combo_bonus()
         SR_score, SR = compute_skill_requirements(all_CB)
-
         d_score = round(diff + SR_score + CB_score, 2)
 
-        st.text("Difficulty ({}".format(counter[0]) + "TA + {}".format(counter[1]) + "A + {}".format(
-            counter[2]) + "B)                                       +{}P. \n".format(diff) +
-            "Composition Requirements                                         +{}P. \n".format(SR_score) +
-            "Connection Value                                                 +{}P. \n".format(CB_score) +
-            "----------------------------------------------------------------------- \n")
-        st.text(
-            "D-score                                                          ={}P.".format(d_score))
-
-        with st.expander('Difficulty Details'):
-            for e in sorted(d_elems, key=lambda x: {'TA': 0, 'A': 1, 'B': 2}[x[1]]):
-                st.markdown('- **' + e[1] + '**  - ' + e[0])
-
-        with st.expander('Requirements Details'):
-            for e_idx, e in enumerate(SR):
-                st.markdown('- ' + str(e[0]) +
-                            '    -    **' + str(e[1]) + '**')
-
-        with st.expander('Connection Details'):
-            for e in counting_CB:
-                st.markdown('- **' +
-                            e[1][0] + ' + ' + e[1][1] + '**  -  ' + e[0][0] + ' + ' + e[0][1])
-
-        st.markdown("---")
-
-        st.subheader('E-Score')
         art_score, art_mistakes = compute_artistry()
         ex_score, ex_mistakes = compute_execution()
         n_score = compute_n_score()
         e_score = round(10.00 + ex_score + art_score, 2)
         final_score = round(e_score + d_score, 2)
 
-        if ['Begin routine before starting sign of jury', ['zero']] in st.session_state['general_mistakes']:
+        if ['Routine started before sign of jury', 'zero'] in st.session_state['general_mistakes']:
             st.error(
-                'The gymnast began the routine before the starting sign of jury! The whole routine should be invalidated.')
-
-        if e_score < 0:
+                'The gymnast began the routine before the starting sign of jury! The whole routine is invalidated. '
+                'Give it a total score of 0.')
+            d_score = 0
             e_score = 0
+            final_score = 0
+        else:
 
-        st.text(
-            "Starting E-score                                                  10.0P.")
-        st.text("Execution                                   {}P.".format(ex_score) + "             \n" +
-                "Artistry                                    {}P.".format(art_score) + "                {}P.\n".format(round(ex_score + art_score, 2)) +
-                "------------------------------------------------------------------------\n")
-        st.text(
-            "E-score                                                           ={}P.".format(e_score))
+            st.subheader('D-Score')
 
-        with st.expander('Execution Details'):
-            element = None
-            for e_idx, e in enumerate(ex_mistakes):
-                if e[0] != element:
-                    element = ex_mistakes[e_idx][0]
-                    st.markdown('##### ' + element)
-                st.markdown('- ' + str(e[1]) + '  :   ' + str(e[2]))
-                st.text('\n')
-            st.markdown('#### General Mistakes')
-            for e_idx, e in enumerate(st.session_state['general_mistakes']):
-                st.markdown('- ' + e[0])
-                st.text('\n')
+            st.text("Difficulty ({}".format(counter[0]) + "TA + {}".format(counter[1]) + "A + {}".format(
+                counter[2]) + "B)                                       +{}P. \n".format(diff) +
+                "Composition Requirements                                         +{}P. \n".format(SR_score) +
+                "Connection Value                                                 +{}P. \n".format(CB_score) +
+                "----------------------------------------------------------------------- \n")
+            st.text(
+                "D-score                                                          ={}P.".format(d_score))
 
-        with st.expander('Artistry Details'):
-            for e in art_mistakes:
-                st.markdown('- ' + e + '  :  -0.1')
+            with st.expander('Difficulty Details'):
+                for e in sorted(d_elems, key=lambda x: {'TA': 0, 'A': 1, 'B': 2}[x[1]]):
+                    st.markdown('- **' + e[1] + '**  - ' + e[0])
 
-        st.markdown("---")
+            with st.expander('Requirements Details'):
+                for e_idx, e in enumerate(SR):
+                    st.markdown('- ' + str(e[0]) +
+                                '    -    **' + str(e[1]) + '**')
+
+            with st.expander('Connection Details'):
+                for e in counting_CB:
+                    st.markdown('- **' +
+                                e[1][0] + ' + ' + e[1][1] + '**  -  ' + e[0][0] + ' + ' + e[0][1])
+
+            st.markdown("---")
+
+            st.subheader('E-Score')
+
+            if e_score < 0:
+                e_score = 0
+
+            st.text(
+                "Starting E-score                                                  10.0P.")
+            st.text("Execution                                   {}P.".format(ex_score) + "             \n" +
+                    "Artistry                                    {}P.".format(art_score) + "                {}P.\n".format(round(ex_score + art_score, 2)) +
+                    "------------------------------------------------------------------------\n")
+            st.text(
+                "E-score                                                           ={}P.".format(e_score))
+
+            with st.expander('Execution Details'):
+                element = None
+                print(str(ex_mistakes))
+                for e_idx, e in enumerate(ex_mistakes):
+                    if e[0] != element:
+                        element = ex_mistakes[e_idx][0]
+                        st.markdown('##### ' + element)
+                    st.markdown('- ' + str(e[1]) + '  :   ' + str(e[2]))
+                    st.text('\n')
+
+
+            with st.expander('Artistry Details'):
+                for e in art_mistakes:
+                    st.markdown('- ' + e + '  :  -0.1')
+
+            st.markdown("---")
         st.subheader("Final score")
 
         st.text("D-score                                                          +{}P. \n".format(d_score) +
                 "E-score                                                          +{}P. \n".format(e_score) +
                 "------------------------------------------------------------------------\n")
         st.text("Final score                                                      ={}P.".format(final_score))
-        if n_score != 0:
+        if n_score != 0 and not ['Routine started before sign of jury', 'zero'] in st.session_state['general_mistakes']:
             new_final_score = round(e_score + d_score - n_score, 2)
             if new_final_score < 0:
                 new_final_score = 0
@@ -589,13 +594,15 @@ def results():
             st.text("New final score                                                  ={}P.".format(
                 new_final_score))
 
-        st.title(" ")
-        if st.button('Back'):
-            st.session_state['state'] = 'artistry'
-            st.experimental_rerun()
+        st.markdown("---")
 
-        if st.button('Next Routine'):
-            hard_reset_session_state()
+    clm1, clm2, clm3, clm4, clm5 = st.columns(5)
+    if clm2.button('Back'):
+        st.session_state['state'] = 'artistry'
+        st.experimental_rerun()
+
+    if clm4.button('Next Routine'):
+        hard_reset_session_state()
 
 # with cols[1]:
     st.sidebar.title('Final Score')
@@ -605,8 +612,9 @@ def results():
     st.sidebar.markdown("---")
     st.sidebar.metric(label="Final score", value=str(final_score)+" P.")
 
-    if n_score != 0:
-        st.sidebar.warning('Neutral deduction of -'+str(n_score)+' for too short routine.\n Scroll for new final score.')
+    if n_score != 0 and not ['Routine started before sign of jury', 'zero'] in st.session_state['general_mistakes']:
+        st.sidebar.warning('Neutral deduction of -'+str(n_score)+' for too short routine.\n '
+                                                                 'Scroll down for new final score.')
         st.sidebar.metric(label="Final score", value=str(new_final_score)+" P.")
 
 
