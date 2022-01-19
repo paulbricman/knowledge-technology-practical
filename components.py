@@ -527,12 +527,12 @@ def results():
             st.subheader('D-Score')
 
             st.text("Difficulty ({}".format(counter[0]) + "TA + {}".format(counter[1]) + "A + {}".format(
-                counter[2]) + "B)                                  +{}P. \n".format(diff) +
-                "Composition Requirements                                    +{}P. \n".format(SR_score) +
-                "Connection Value                                            +{}P. \n".format(CB_score) +
-                "------------------------------------------------------------------ \n")
+                counter[2]) + "B)                               +{}P. \n".format(diff) +
+                "Composition Requirements                                 +{}P. \n".format(SR_score) +
+                "Connection Value                                         +{}P. \n".format(CB_score) +
+                "--------------------------------------------------------------- \n")
             st.text(
-                "D-score                                                     ={}P.".format(d_score))
+                "D-score                                                  ={}P.".format(d_score))
 
             with st.expander('Difficulty Details'):
                 for e in sorted(d_elems, key=lambda x: {'TA': 0, 'A': 1, 'B': 2}[x[1]]):
@@ -556,12 +556,12 @@ def results():
                 e_score = 0
 
             st.text(
-                "Starting E-score                                             10.0P.")
-            st.text("Execution                              {}P.".format(ex_score) + "             \n" +
-                    "Artistry                               {}P.".format(art_score) + "                {}P.\n".format(round(ex_score + art_score, 2)) +
-                    "-------------------------------------------------------------------\n")
+                "Starting E-score                                          10.0P.")
+            st.text("Execution                           {}P.".format(ex_score) + "             \n" +
+                    "Artistry                            {}P.".format(art_score) + "                {}P.\n".format(round(ex_score + art_score, 2)) +
+                    "----------------------------------------------------------------\n")
             st.text(
-                "E-score                                                      ={}P.".format(e_score))
+                "E-score                                                   ={}P.".format(e_score))
 
             with st.expander('Execution Details'):
                 element = None
@@ -581,10 +581,10 @@ def results():
             st.markdown("---")
         st.subheader("Final score")
 
-        st.text("D-score                                                     +{}P. \n".format(d_score) +
-                "E-score                                                     +{}P. \n".format(e_score) +
-                "-------------------------------------------------------------------\n")
-        st.text("Final score                                                 ={}P.".format(final_score))
+        st.text("D-score                                                  +{}P. \n".format(d_score) +
+                "E-score                                                  +{}P. \n".format(e_score) +
+                "----------------------------------------------------------------\n")
+        st.text("Final score                                              ={}P.".format(final_score))
         if n_score != 0 and not ['Routine started before sign of jury', 'zero'] in st.session_state['general_mistakes']:
             new_final_score = round(e_score + d_score - n_score, 2)
             if new_final_score < 0:
