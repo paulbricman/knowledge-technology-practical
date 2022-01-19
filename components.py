@@ -181,8 +181,6 @@ def detail_element(element):
 
     if btn4.button('Back'):
         if st.session_state['current_element'] == 0:
-            # in the case where we are in the screen of the first element, return to choose elements page
-            print("correct back")
             st.session_state['state'] = 'choose_elements'
         else:
             st.session_state['current_element'] -= 1
@@ -399,45 +397,53 @@ def compute_execution():
 
     for mistake in general_mistakes:
         if mistake[1] == 'small':
-            element_mistakes += [['General mistakes', mistake[0]+" (small) ", -0.1]]
+            element_mistakes += [['General mistakes',
+                                  mistake[0]+" (small) ", -0.1]]
             execution -= 0.1
         elif mistake[1] == 'middle':
-            element_mistakes += [['General mistakes', mistake[0]+" (middle) ", -0.3]]
+            element_mistakes += [['General mistakes',
+                                  mistake[0]+" (middle) ", -0.3]]
             execution -= 0.3
         elif mistake[1] == 'zero':
-            element_mistakes += [['General mistakes', mistake[0], 'Entire routine is worth 0']]
+            element_mistakes += [['General mistakes',
+                                  mistake[0], 'Entire routine is worth 0']]
             execution = 10  # positive number should not be accessible normally, this routine is not valid
 
     if execution <= 0:
         for elem in st.session_state['selected_elements']:
-            print(str(elem))
-            print(str(elem[0]))
             for answer in elem[1]['info_element_questions']:
                 if answer[0] == "What was the deviation from a 180º splits?":
                     if answer[1] == "0-90°" or answer[1] == "<20°":
-                        element_mistakes += [[elem[0], answer[1]+" deviation from a 180º splits ", -0.1]]
+                        element_mistakes += [[elem[0], answer[1] +
+                                              " deviation from a 180º splits ", -0.1]]
                         execution -= 0.1
                     elif answer[1] == ">90º(under horizontal)" or answer[1] == "20º - 45º":
-                        element_mistakes += [[elem[0], answer[1]+" deviation from a 180º splits ", -0.3]]
+                        element_mistakes += [[elem[0], answer[1] +
+                                              " deviation from a 180º splits ", -0.3]]
                         execution -= 0.3
                 if answer[0] == "Were both legs above horizontal?":
                     if answer[1] == "No, one/both legs were under horizontal":
-                        element_mistakes += [[elem[0], "one/both legs were under horizontal ", -0.3]]
+                        element_mistakes += [[elem[0],
+                                              "one/both legs were under horizontal ", -0.3]]
                         execution -= 0.3
                     elif answer[1] == "No, one/both legs were on horizontal":
-                        element_mistakes += [[elem[0], "one/both legs were on horizontal ", -0.1]]
+                        element_mistakes += [[elem[0],
+                                              "one/both legs were on horizontal ", -0.1]]
                         execution -= 0.1
 
             for mistake in elem[1]['info_execution_mistakes']:
                 if mistake[1] != 'none':
                     if mistake[1] == 'small':
-                        element_mistakes += [[elem[0], mistake[0]+" (small) ", -0.1]]
+                        element_mistakes += [[elem[0],
+                                              mistake[0]+" (small) ", -0.1]]
                         execution -= 0.1
                     elif mistake[1] == 'middle':
-                        element_mistakes += [[elem[0], mistake[0]+" (middle) ", -0.3]]
+                        element_mistakes += [[elem[0],
+                                              mistake[0]+" (middle) ", -0.3]]
                         execution -= 0.3
                     elif mistake[1] == 'big':
-                        element_mistakes += [[elem[0], mistake[0]+" (big) ", -0.5]]
+                        element_mistakes += [[elem[0],
+                                              mistake[0]+" (big) ", -0.5]]
                         execution -= 0.5
                     elif mistake[1] == 'very big':
                         element_mistakes += [[elem[0], mistake[0], -1]]
@@ -448,13 +454,16 @@ def compute_execution():
             for mistake in elem[1]['info_landing_mistakes']:
                 if mistake[1] != 'none':
                     if mistake[1] == 'small':
-                        element_mistakes += [[elem[0], mistake[0]+" (small) ", -0.1]]
+                        element_mistakes += [[elem[0],
+                                              mistake[0]+" (small) ", -0.1]]
                         landing_ex += 0.1
                     elif mistake[1] == 'middle':
-                        element_mistakes += [[elem[0], mistake[0]+" (middle) ", -0.3]]
+                        element_mistakes += [[elem[0],
+                                              mistake[0]+" (middle) ", -0.3]]
                         landing_ex += 0.3
                     elif mistake[1] == 'big':
-                        element_mistakes += [[elem[0], mistake[0]+" (big) ", -0.5]]
+                        element_mistakes += [[elem[0],
+                                              mistake[0]+" (big) ", -0.5]]
                         landing_ex += 0.5
                     elif mistake[1] == 'very big':
                         element_mistakes += [[elem[0], mistake[0], -1]]
@@ -462,12 +471,14 @@ def compute_execution():
                         fall = 1
             # capped deduction at 0.8 if there was no fall
             if fall == 0 and landing_ex > 0.8:
-                element_mistakes += [[elem[0], "No fall so landing deductions capped at: ", -0.8]]
+                element_mistakes += [[elem[0],
+                                      "No fall so landing deductions capped at: ", -0.8]]
                 execution -= 0.8
             else:
                 execution -= landing_ex
 
     return round(execution, 2), element_mistakes
+
 
 def compute_n_score():
     elem_count = len(st.session_state['selected_elements'])
@@ -530,6 +541,10 @@ def results():
         e_score = round(10.00 + ex_score + art_score, 2)
         final_score = round(e_score + d_score, 2)
 
+        if ['Begin routine before starting sign of jury', ['zero']] in st.session_state['general_mistakes']:
+            st.error(
+                'The gymnast began the routine before the starting sign of jury! The whole routine should be invalidated.')
+
         if e_score < 0:
             e_score = 0
 
@@ -544,11 +559,14 @@ def results():
         with st.expander('Execution Details'):
             element = None
             for e_idx, e in enumerate(ex_mistakes):
-                print('e0: ' + str(e[0]))
                 if e[0] != element:
                     element = ex_mistakes[e_idx][0]
-                    st.markdown('##### '+ element)
-                st.markdown('- '+ str(e[1]) + '  :   ' + str(e[2]))
+                    st.markdown('##### ' + element)
+                st.markdown('- ' + str(e[1]) + '  :   ' + str(e[2]))
+                st.text('\n')
+            st.markdown('#### General Mistakes')
+            for e_idx, e in enumerate(st.session_state['general_mistakes']):
+                st.markdown('- ' + e[0])
                 st.text('\n')
 
         with st.expander('Artistry Details'):
@@ -566,20 +584,24 @@ def results():
             new_final_score = round(e_score + d_score - n_score, 2)
             if new_final_score < 0:
                 new_final_score = 0
-            st.warning('Neutral deduction of -'+str(n_score)+' for too short routine')
-            st.text("New final score                                                  ={}P.".format(new_final_score))
+            st.warning('Neutral deduction of -' +
+                       str(n_score)+' for too short routine')
+            st.text("New final score                                                  ={}P.".format(
+                new_final_score))
 
         st.title(" ")
         if st.button('Back'):
             st.session_state['state'] = 'artistry'
             st.experimental_rerun()
 
-        #ADD RESTART BUTTON WITH TEXT "Next Routine"
+        if st.button('Next Routine'):
+            hard_reset_session_state()
 
+# with cols[1]:
     st.sidebar.title('Final Score')
 
-    st.sidebar.metric("D-score", value= str(d_score)+" P.")
-    st.sidebar.metric("E-score", value= str(e_score)+" P.")
+    st.sidebar.metric("D-score", value=str(d_score)+" P.")
+    st.sidebar.metric("E-score", value=str(e_score)+" P.")
     st.sidebar.markdown("---")
     st.sidebar.metric(label="Final score", value=str(final_score)+" P.")
 
