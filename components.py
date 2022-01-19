@@ -530,7 +530,7 @@ def results():
                 counter[2]) + "B)                               +{}P. \n".format(diff) +
                 "Composition Requirements                                 +{}P. \n".format(SR_score) +
                 "Connection Value                                         +{}P. \n".format(CB_score) +
-                "--------------------------------------------------------------- \n")
+                "------------------------------------------------------------- \n")
             st.text(
                 "D-score                                                  ={}P.".format(d_score))
 
@@ -559,7 +559,7 @@ def results():
                 "Starting E-score                                          10.0P.")
             st.text("Execution                           {}P.".format(ex_score) + "             \n" +
                     "Artistry                            {}P.".format(art_score) + "                {}P.\n".format(round(ex_score + art_score, 2)) +
-                    "----------------------------------------------------------------\n")
+                    "--------------------------------------------------------------\n")
             st.text(
                 "E-score                                                   ={}P.".format(e_score))
 
@@ -583,7 +583,7 @@ def results():
 
         st.text("D-score                                                  +{}P. \n".format(d_score) +
                 "E-score                                                  +{}P. \n".format(e_score) +
-                "----------------------------------------------------------------\n")
+                "---------------------------------------------------------------\n")
         st.text("Final score                                              ={}P.".format(final_score))
         if n_score != 0 and not ['Routine started before sign of jury', 'zero'] in st.session_state['general_mistakes']:
             new_final_score = round(e_score + d_score - n_score, 2)
@@ -591,7 +591,7 @@ def results():
                 new_final_score = 0
             st.warning('Neutral deduction of -' +
                        str(n_score)+' for too short routine')
-            st.text("New final score                                                  ={}P.".format(
+            st.text("New final score                                          ={}P.".format(
                 new_final_score))
 
         st.markdown("---")
