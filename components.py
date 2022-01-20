@@ -174,7 +174,8 @@ def detail_element(element):
     combo_yes = cols[0].checkbox("This element is the first element in a connection", key=element[0])
     if combo_yes:
         combo_option = cols[0].selectbox('With which element was this element combined?', ['none'] +
-                                         [elem[0] for elem in st.session_state['selected_elements']], key=element[0])
+                                         [elem[0] for elem in st.session_state['selected_elements'] if elem[0] != st.session_state['selected_elements'][st.session_state['current_element']
+                                         ][0]], key=element[0])
         print(str(combo_option))
         st.session_state['selected_elements'][st.session_state['current_element']
                                               ][1]['info_combo'] = combo_option
@@ -535,12 +536,12 @@ def results():
             st.subheader('D-Score')
 
             st.text("Difficulty ({}".format(counter[0]) + "TA + {}".format(counter[1]) + "A + {}".format(
-                counter[2]) + "B)                               +{}P. \n".format(diff) +
-                "Composition Requirements                                 +{}P. \n".format(SR_score) +
-                "Connection Value                                         +{}P. \n".format(CB_score) +
-                "------------------------------------------------------------- \n")
+                counter[2]) + "B)                              +{}P. \n".format(diff) +
+                "Composition Requirements                                +{}P. \n".format(SR_score) +
+                "Connection Value                                        +{}P. \n".format(CB_score) +
+                "------------------------------------------------------------ \n")
             st.text(
-                "D-score                                                  ={}P.".format(d_score))
+                "D-score                                                 ={}P.".format(d_score))
 
             with st.expander('Difficulty Details'):
                 for e in sorted(d_elems, key=lambda x: {'TA': 0, 'A': 1, 'B': 2}[x[1]]):
@@ -564,12 +565,12 @@ def results():
                 e_score = 0
 
             st.text(
-                "Starting E-score                                          10.0P.")
-            st.text("Execution                           {}P.".format(ex_score) + "             \n" +
-                    "Artistry                            {}P.".format(art_score) + "                {}P.\n".format(round(ex_score + art_score, 2)) +
+                "Starting E-score                                        10.0P.")
+            st.text("Execution                          {}P.".format(ex_score) + "            \n" +
+                    "Artistry                           {}P.".format(art_score) + "               {}P.\n".format(round(ex_score + art_score, 2)) +
                     "--------------------------------------------------------------\n")
             st.text(
-                "E-score                                                   ={}P.".format(e_score))
+                "E-score                                                 ={}P.".format(e_score))
 
             with st.expander('Execution Details'):
                 element = None
@@ -589,17 +590,17 @@ def results():
             st.markdown("---")
         st.subheader("Final score")
 
-        st.text("D-score                                                  +{}P. \n".format(d_score) +
-                "E-score                                                  +{}P. \n".format(e_score) +
-                "---------------------------------------------------------------\n")
-        st.text("Final score                                              ={}P.".format(final_score))
+        st.text("D-score                                                 +{}P. \n".format(d_score) +
+                "E-score                                                 +{}P. \n".format(e_score) +
+                "--------------------------------------------------------------\n")
+        st.text("Final score                                             ={}P.".format(final_score))
         if n_score != 0 and not ['Routine started before sign of jury', 'zero'] in st.session_state['general_mistakes']:
             new_final_score = round(e_score + d_score - n_score, 2)
             if new_final_score < 0:
                 new_final_score = 0
             st.warning('Neutral deduction of -' +
                        str(n_score)+' for too short routine')
-            st.text("New final score                                          ={}P.".format(
+            st.text("New final score                                         ={}P.".format(
                 new_final_score))
 
         st.markdown("---")
