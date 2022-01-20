@@ -176,7 +176,6 @@ def detail_element(element):
         combo_option = cols[0].selectbox('With which element was this element combined?', ['none'] +
                                          [elem[0] for elem in st.session_state['selected_elements'] if elem[0] != st.session_state['selected_elements'][st.session_state['current_element']
                                          ][0]], key=element[0])
-        print(str(combo_option))
         st.session_state['selected_elements'][st.session_state['current_element']
                                               ][1]['info_combo'] = combo_option
     else:
@@ -327,7 +326,6 @@ def compute_combo_bonus():
                     for comb in all_cbs:
                         if (comb[0] == comboed_elem[0] and comb[1] == elem[0]) or (comboed_elem[0] == elem[0]):
                             flag = 1
-                            print('flag on')
 
                     if flag == 0:
                         for l in comboed_elem[1]['info_landing_mistakes']:
@@ -410,7 +408,6 @@ def get_idx(elem, cnt_acrodance):
         idx = 1
     elif elem[1] == 'dance':
         idx = 0
-    print(str(idx))
     if cnt_acrodance[idx] == 0:
         # the places of acro/dance are filled
         if cnt_acrodance[2] != 0:
@@ -605,7 +602,6 @@ def results():
 
             with st.expander('Execution Details'):
                 element = None
-                print(str(ex_mistakes))
                 for e_idx, e in enumerate(ex_mistakes):
                     if e[0] != element:
                         element = ex_mistakes[e_idx][0]
