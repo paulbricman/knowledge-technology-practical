@@ -2,6 +2,7 @@ import streamlit as st
 from components import *
 from util import *
 
+# To run code, use: streamlit run main.py
 
 st.set_page_config(
     page_title='gymnastics expert system',
