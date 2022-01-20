@@ -274,35 +274,35 @@
     "More than 1x ½ turn on 2 feet during the entire routine"
   ],
   "general_execution_mistakes": {
-    "Bent arms or knees": ["small", "middle", "big"],
-    "Open knees or legs": ["small", "middle"],
-    "Not enough straightening of body": ["small", "middle"],
+    "Bent arms or knees": ["small", "medium", "large"],
+    "Open knees or legs": ["small", "medium"],
+    "Not enough straightening of body": ["small", "medium"],
     "Failure to meet technical requirements of dance element": [
       "small",
-      "middle",
-      "big"
+      "medium",
+      "large"
     ],
     "Clear doubts before element": ["small"],
     "Body lines": ["small"],
     "Flexed feet": ["small"],
     "Precision": ["small"],
-    "Dismount too close to apparatus": ["middle"],
-    "Help from trainer": ["very big"]
+    "Dismount too close to apparatus": ["medium"],
+    "Help from trainer": ["very large"]
   },
   "general_landing_mistakes": {
-    "Lack of balance": ["small", "middle"],
-    "Bad body form": ["small", "middle"],
+    "Lack of balance": ["small", "medium"],
+    "Bad body form": ["small", "medium"],
     "Separated legs at landing": ["small"],
     "Extra arm swing": ["small"],
     "Small steps/small hop": ["small"],
-    "Big step": ["middle"],
-    "Deep squat": ["middle"],
-    "Support of 1 or 2 arms on beam/mat": ["very big"]
+    "Big step": ["medium"],
+    "Deep squat": ["medium"],
+    "Support of 1 or 2 arms on beam/mat": ["very large"]
   },
   "general_mistakes": {
     "Duration of the routine was longer than 1:20 min": ["small"],
-    "No presentation to judge at start and/or end of routine": ["middle"],
-    "Jewelry, underwear or not skin colored tape visible": ["middle"],
+    "No presentation to judge at start and/or end of routine": ["medium"],
+    "Jewelry, underwear or not skin colored tape visible": ["medium"],
     "Routine started before sign of jury": ["zero"]
   }
 }

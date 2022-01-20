@@ -18,8 +18,10 @@ def notes_section(parent):
     parent.markdown('### Notes')
     st.session_state['small_mistakes'] = parent.number_input(
         'Small mistakes', min_value=0, step=1, value=st.session_state['small_mistakes'])
-    st.session_state['big_mistakes'] = parent.number_input(
-        'Big mistakes', min_value=0, step=1, value=st.session_state['big_mistakes'])
+    st.session_state['medium_mistakes'] = parent.number_input(
+        'Medium mistakes', min_value=0, step=1, value=st.session_state['medium_mistakes'])
+    st.session_state['large_mistakes'] = parent.number_input(
+        'Large mistakes', min_value=0, step=1, value=st.session_state['large_mistakes'])
     st.session_state['falls'] = parent.number_input(
         'Falls', min_value=0, step=1, value=st.session_state['falls'])
     st.session_state['connections'] = parent.number_input(
@@ -159,19 +161,26 @@ def detail_element(element):
             # -1 and no DS CB and SR
             st.session_state['selected_elements'][st.session_state['current_element']][1]['valid'] = 0
             st.session_state['selected_elements'][st.session_state['current_element']
-                                                  ][1]['info_landing_mistakes'] += [['Fall (not landed)', 'very big']]
+                                                  ][1]['info_landing_mistakes'] += [['Fall (not landed)', 'very large']]
         else:
             st.session_state['selected_elements'][st.session_state['current_element']
-                                                  ][1]['info_landing_mistakes'] += [['Fall', 'very big']]
+                                                  ][1]['info_landing_mistakes'] += [['Fall', 'very large']]
     else:
         st.session_state['selected_elements'][st.session_state['current_element']
                                               ][1]['info_landing_mistakes'] += [['Fall', 'none']]
 
     cols[0].subheader('Combination:')
-    combo_option = cols[0].selectbox('Was this element combined with another one?', [
-        'none'] + [e[0] for e in st.session_state['selected_elements']], key=element[0])
-    st.session_state['selected_elements'][st.session_state['current_element']
-                                          ][1]['info_combo'] = combo_option
+
+    combo_yes = cols[0].checkbox("This element is the first element in a connection", key=element[0])
+    if combo_yes:
+        combo_option = cols[0].selectbox('With which element was this element combined?', ['none'] +
+                                         [elem[0] for elem in st.session_state['selected_elements']], key=element[0])
+        print(str(combo_option))
+        st.session_state['selected_elements'][st.session_state['current_element']
+                                              ][1]['info_combo'] = combo_option
+    else:
+        st.session_state['selected_elements'][st.session_state['current_element']
+        ][1]['info_combo'] = 'none'
 
     btn1, btn2, btn3, btn4, btn5, btn6, btn7, btn8 = st.columns(8)
 
@@ -319,7 +328,7 @@ def compute_combo_bonus():
                     for l in comboed_elem[1]['info_landing_mistakes']:
                         # check whether the second element of the combination has a
                         # fall (the combo doesn't count then)
-                        if l[1] == 'very big':
+                        if l[1] == 'very large':
                             # there was a fall so combo doesnt count
                             flag = 1
 
@@ -401,14 +410,13 @@ def compute_execution():
             element_mistakes += [['General mistakes',
                                   mistake[0]+" (small) ", -0.1]]
             execution -= 0.1
-        elif mistake[1] == 'middle':
+        elif mistake[1] == 'medium':
             element_mistakes += [['General mistakes',
-                                  mistake[0]+" (middle) ", -0.3]]
+                                  mistake[0]+" (medium) ", -0.3]]
             execution -= 0.3
         elif mistake[1] == 'zero':
             element_mistakes += [['General mistakes',
                                   mistake[0], 'Entire routine is worth 0']]
-            #execution = 10  # positive number should not be accessible normally, this routine is not valid
 
     if execution <= 0:
         for elem in st.session_state['selected_elements']:
@@ -438,15 +446,15 @@ def compute_execution():
                         element_mistakes += [[elem[0],
                                               mistake[0]+" (small) ", -0.1]]
                         execution -= 0.1
-                    elif mistake[1] == 'middle':
+                    elif mistake[1] == 'medium':
                         element_mistakes += [[elem[0],
-                                              mistake[0]+" (middle) ", -0.3]]
+                                              mistake[0]+" (medium) ", -0.3]]
                         execution -= 0.3
-                    elif mistake[1] == 'big':
+                    elif mistake[1] == 'large':
                         element_mistakes += [[elem[0],
-                                              mistake[0]+" (big) ", -0.5]]
+                                              mistake[0]+" (large) ", -0.5]]
                         execution -= 0.5
-                    elif mistake[1] == 'very big':
+                    elif mistake[1] == 'very large':
                         element_mistakes += [[elem[0], mistake[0], -1]]
                         execution -= 1.0
 
@@ -458,15 +466,15 @@ def compute_execution():
                         element_mistakes += [[elem[0],
                                               mistake[0]+" (small) ", -0.1]]
                         landing_ex += 0.1
-                    elif mistake[1] == 'middle':
+                    elif mistake[1] == 'medium':
                         element_mistakes += [[elem[0],
-                                              mistake[0]+" (middle) ", -0.3]]
+                                              mistake[0]+" (medium) ", -0.3]]
                         landing_ex += 0.3
-                    elif mistake[1] == 'big':
+                    elif mistake[1] == 'large':
                         element_mistakes += [[elem[0],
-                                              mistake[0]+" (big) ", -0.5]]
+                                              mistake[0]+" (large) ", -0.5]]
                         landing_ex += 0.5
-                    elif mistake[1] == 'very big':
+                    elif mistake[1] == 'very large':
                         element_mistakes += [[elem[0], mistake[0], -1]]
                         landing_ex = 1.0
                         fall = 1
@@ -604,7 +612,6 @@ def results():
     if clm4.button('Next Routine'):
         hard_reset_session_state()
 
-# with cols[1]:
     st.sidebar.title('Final Score')
 
     st.sidebar.metric("D-score", value=str(d_score)+" P.")

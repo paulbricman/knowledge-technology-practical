@@ -11,7 +11,8 @@ def filter_dict(old_dict, callback):
 
 def init_session_state():
     st.session_state['small_mistakes'] = 0
-    st.session_state['big_mistakes'] = 0
+    st.session_state['medium_mistakes'] = 0
+    st.session_state['large_mistakes'] = 0
     st.session_state['falls'] = 0
     st.session_state['connections'] = 0
 
@@ -23,7 +24,8 @@ def init_session_state():
 
 def hard_reset_session_state():
     st.session_state['small_mistakes'] = 0
-    st.session_state['big_mistakes'] = 0
+    st.session_state['medium_mistakes'] = 0
+    st.session_state['large_mistakes'] = 0
     st.session_state['falls'] = 0
     st.session_state['connections'] = 0
 
