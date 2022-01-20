@@ -255,8 +255,8 @@ def compute_skill_requirements(all_CB):
     for combo in all_CB:
         [elem1] = get_element_by_name(combo[0])
         [elem2] = get_element_by_name(combo[1])
-        if elem1[1]['element_type'] == 'dance' or elem1[1]['element_type'] == 'jump':
-            if elem2[1]['element_type'] == 'dance' or elem2[1]['element_type'] == 'jump':
+        if elem1[1]['dance_acro'] == 'dance':
+            if elem2[1]['dance_acro'] == 'dance':
                 # The combo consists of 2 dance elements continue
                 if elem1[0] == 'Split jump' or elem1[0] == 'Split leap':
                     # Check for 180º splits in first element
@@ -316,78 +316,110 @@ def compute_combo_bonus():
 
             if flag == 0:
                 # 1st element counts towards combo, now find 2nd element
-                comboed_elem = [
-                    e for e in st.session_state['selected_elements'] if
-                    e[0] == elem[1]['info_combo'] and e[1]['valid'] == 1][0]
+                comboed_elem = []
+                for e in st.session_state['selected_elements']:
+                    if e[0] == elem[1]['info_combo']:
+                        if e[1]['valid'] == 1:
+                            comboed_elem = e
 
-                # Check whether this combo was not already calculated or is a combination with itself
-                for comb in all_cbs:
-                    if (comb[0] == comboed_elem[0] and comb[1] == elem[0]) or (comboed_elem[0] == elem[0]):
-                        flag = 1
-
-                if flag == 0:
-                    for l in comboed_elem[1]['info_landing_mistakes']:
-                        # check whether the second element of the combination has a
-                        # fall (the combo doesn't count then)
-                        if l[1] == 'very large':
-                            # there was a fall so combo doesnt count
+                if comboed_elem != []:
+                    # Check whether this combo was not already calculated or is a combination with itself
+                    for comb in all_cbs:
+                        if (comb[0] == comboed_elem[0] and comb[1] == elem[0]) or (comboed_elem[0] == elem[0]):
                             flag = 1
+                            print('flag on')
 
                     if flag == 0:
-                        # 2nd element counts towards combo now check element difficulty to find bonus
-                        all_cbs += [[elem[0], comboed_elem[0]]]
+                        for l in comboed_elem[1]['info_landing_mistakes']:
+                            # check whether the second element of the combination has a
+                            # fall (the combo doesn't count then)
+                            if l[1] == 'very large':
+                                # there was a fall so combo doesnt count
+                                flag = 1
 
-                        sorted_combo_elems = sorted(
-                            [elem[1]['difficulty'], comboed_elem[1]['difficulty']])
-                        if sorted_combo_elems == ['A', 'B']:
-                            cb += 0.2
-                            counting_cbs += [[[elem[0],
-                                               comboed_elem[0]], ['A', 'B']]]
-                        elif sorted_combo_elems == ['B', 'B']:
-                            cb += 0.2
-                            counting_cbs += [[[elem[0],
-                                               comboed_elem[0]], ['B', 'B']]]
-                        elif sorted_combo_elems == ['A', 'A']:
-                            cb += 0.1
-                            counting_cbs += [[[elem[0],
-                                               comboed_elem[0]], ['A', 'A']]]
+                        if flag == 0:
+                            # 2nd element counts towards combo now check element difficulty to find bonus
+                            all_cbs += [[elem[0], comboed_elem[0]]]
+
+                            sorted_combo_elems = sorted(
+                                [elem[1]['difficulty'], comboed_elem[1]['difficulty']])
+                            if sorted_combo_elems == ['A', 'B']:
+                                cb += 0.2
+                                counting_cbs += [[[elem[0],
+                                                   comboed_elem[0]], ['A', 'B']]]
+                            elif sorted_combo_elems == ['B', 'B']:
+                                cb += 0.2
+                                counting_cbs += [[[elem[0],
+                                                   comboed_elem[0]], ['B', 'B']]]
+                            elif sorted_combo_elems == ['A', 'A']:
+                                cb += 0.1
+                                counting_cbs += [[[elem[0],
+                                                   comboed_elem[0]], ['A', 'A']]]
 
     return round(cb, 2), counting_cbs, all_cbs
 
 
 def compute_difficulty_score():
-    elems = [[e[0], e[1]['difficulty']]
+    elems = [[e[0], e[1]['dance_acro'], e[1]['difficulty']]
              for e in st.session_state['selected_elements'] if e[1]['valid'] == 1]
 
     counted_elems = []
     difficulty = 0
-    counter = [0, 0, 0]  # idx0=TA, idx1=A, idx2=B
+    counter_dif = [0, 0, 0]  # idx0=TA, idx1=A, idx2=B
+    cnt_acrodance = [3, 2, 2]  # idx0=Dance, idx1=Acro, idx2=Free
     total_cnt = 0
 
     for elem in elems:
         if total_cnt != 7:
-            if elem[1] == 'B':
+            idx = get_idx(elem, cnt_acrodance)
+
+            if elem[2] == 'B' and idx != -1:
                 difficulty += 0.2
-                counter[2] += 1
-                total_cnt += 1
-                counted_elems.append(elem)
-    for elem in elems:
-        if total_cnt != 7:
-            if elem[1] == 'A':
-                difficulty += 0.1
-                counter[1] += 1
-                total_cnt += 1
-                counted_elems.append(elem)
-    for elem in elems:
-        if total_cnt != 7:
-            if elem[1] == 'TA':
-                difficulty += 0.1
-                counter[0] += 1
+                counter_dif[2] += 1
+                cnt_acrodance[idx] -= 1
                 total_cnt += 1
                 counted_elems.append(elem)
 
-    return round(difficulty, 2), counted_elems, counter
+    for elem in elems:
+        if total_cnt != 7:
+            idx = get_idx(elem, cnt_acrodance)
 
+            if elem[2] == 'A' and idx != -1:
+                difficulty += 0.1
+                counter_dif[1] += 1
+                cnt_acrodance[idx] -= 1
+                total_cnt += 1
+                counted_elems.append(elem)
+
+    for elem in elems:
+        if total_cnt != 7:
+            idx = get_idx(elem, cnt_acrodance)
+
+            if elem[2] == 'TA' and idx != -1:
+                difficulty += 0.1
+                counter_dif[0] += 1
+                cnt_acrodance[idx] -= 1
+                total_cnt += 1
+                counted_elems.append(elem)
+
+    return round(difficulty, 2), counted_elems, counter_dif
+
+def get_idx(elem, cnt_acrodance):
+    idx = -1
+    if elem[1] == 'acro':
+        idx = 1
+    elif elem[1] == 'dance':
+        idx = 0
+    print(str(idx))
+    if cnt_acrodance[idx] == 0:
+        # the places of acro/dance are filled
+        if cnt_acrodance[2] != 0:
+            # there are places left inside the free choice
+            idx = 2
+        else:
+            # no places left in free choice
+            idx = -1
+    return idx
 
 def compute_artistry():
     artistry = 0
@@ -405,7 +437,6 @@ def compute_execution():
     element_mistakes = []
     execution = 0
 
-    print(str(general_mistakes))
     for mistake in general_mistakes:
         if mistake[1] == 'small':
             element_mistakes += [['General mistakes',
@@ -544,8 +575,8 @@ def results():
                 "D-score                                                 ={}P.".format(d_score))
 
             with st.expander('Difficulty Details'):
-                for e in sorted(d_elems, key=lambda x: {'TA': 0, 'A': 1, 'B': 2}[x[1]]):
-                    st.markdown('- **' + e[1] + '**  - ' + e[0])
+                for e in sorted(d_elems, key=lambda x: {'TA': 0, 'A': 1, 'B': 2}[x[2]]):
+                    st.markdown('- **' + e[2] + '**  - ' + e[0] + ' ('+ e[1]+')')
 
             with st.expander('Requirements Details'):
                 for e_idx, e in enumerate(SR):
