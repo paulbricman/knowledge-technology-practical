@@ -2,4 +2,9 @@ The system can be run in two ways.
     1. Either by typing: "streamlit run main.py"
     2. Going to this website: https://huggingface.co/spaces/paulbricman/knowledge-technology-practical
 
-The used packages were: streamlit, json, pandas. We used the latest version.
+The used packages were: streamlit, json, pandas.
+
+We used the latest version:
+    Streamlit: Version 1.4.0
+    json: 2020-12
+    Pandas: 1.3.5
