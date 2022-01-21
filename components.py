@@ -450,7 +450,7 @@ def compute_execution():
     if execution <= 0:
         for elem in st.session_state['selected_elements']:
             for answer in elem[1]['info_element_questions']:
-                if answer[0] == "What was the deviation from a 180º splits?":
+                if answer[0] == "What was the deviation from a 180º split of legs?":
                     if answer[1] == "0-90°" or answer[1] == "<20°":
                         element_mistakes += [[elem[0], answer[1] +
                                               " deviation from a 180º splits ", -0.1]]

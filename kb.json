@@ -41,7 +41,7 @@
           "difficulty": "A",
           "element_questions": [
             {
-              "question": "What was the deviation from a 180º splits?",
+              "question": "What was the deviation from a 180º split of legs?",
               "options": {
                 "0°": {},
                 "<20°": {},
@@ -62,7 +62,7 @@
           "difficulty": "B",
           "element_questions": [
             {
-              "question": "What was the deviation from a 180º splits?",
+              "question": "What was the deviation from a 180º split of legs?",
               "options": {
                 "0°": {},
                 "<20°": {},
@@ -154,7 +154,7 @@
               }
             },
             {
-              "question": "What was the deviation from a 180º splits?",
+              "question": "What was the deviation from a 180º split of legs?",
               "options": {
                 "0°": {},
                 "0-90°": {},
